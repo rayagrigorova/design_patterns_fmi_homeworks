@@ -16,8 +16,8 @@ int Rectangle::perimeter() const {
 	return 2 * (a + b);
 }
 
-Figure* Rectangle::clone() const {
-	return new Rectangle(*this);
+std::unique_ptr<Figure> Rectangle::clone()  const {
+	return std::make_unique<Rectangle>(*this);
 }
 
 std::string Rectangle::toString() const {

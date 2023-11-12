@@ -9,6 +9,7 @@ public:
 	Triangle(double a, double b, double c);
 
 	int perimeter() const override;
-	Figure* clone() const override;
+	std::unique_ptr<Figure> clone() const override;
 	std::string toString() const override;
 };
+bool isValidTriangle(double a, double b, double c);

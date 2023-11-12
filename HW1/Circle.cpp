@@ -17,8 +17,8 @@ int Circle::perimeter() const {
     return 2 * M_PI * r;
 }
 
-Figure* Circle::clone() const {
-    return new Circle(*this);
+std::unique_ptr<Figure> Circle::clone() const {
+    return std::make_unique<Circle>(*this);
 }
 
 std::string Circle::toString() const {
