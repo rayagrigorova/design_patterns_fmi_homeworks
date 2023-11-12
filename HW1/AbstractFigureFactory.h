@@ -5,7 +5,7 @@
 
 #include "FigureFactory.h"
 
-class AbstractFigureFactory : public FigureFactory{
+class AbstractFigureFactory {
 public:
 	virtual std::unique_ptr<FigureFactory> create(std::string str);
 };
