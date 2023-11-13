@@ -9,7 +9,7 @@ StreamFigureFactory::StreamFigureFactory(std::istream& is) : inputStream(is){
 }
 
 std::unique_ptr<Figure> StreamFigureFactory::create() {
-    if (!inputStream.good()) {
+    if (!inputStream) {
         std::cerr << "Input stream is not okay for reading." << std::endl;
         return nullptr;
     }

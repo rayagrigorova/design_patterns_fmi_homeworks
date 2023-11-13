@@ -17,6 +17,7 @@ bool Program::init(){
 		std::cout << "Please, enter the number of figures to generate" << std::endl;
 		int count = 0;
 		std::cin >> count; 
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		for (int i = 0; i < count; i++) {
 			std::unique_ptr<Figure> fig = factory->create();

@@ -16,8 +16,15 @@ std::unique_ptr<FigureFactory> AbstractFigureFactory::create(std::string str) {
 		std::string fileName;
 		std::cin >> fileName;
 
-		std::ifstream ifs(fileName);
-		return std::make_unique<StreamFigureFactory>(ifs);
+		std::ifstream* ifs = new std::ifstream(fileName);
+
+		if (!ifs->is_open()) {
+			std::cerr << "Error opening file: " << fileName << std::endl;
+			delete ifs;
+			return nullptr;
+		}
+
+		return std::make_unique<StreamFigureFactory>(*ifs);
 	}
 	else {
 		return nullptr;
