@@ -5,10 +5,13 @@
 
 class Program {
 	std::vector<std::unique_ptr<Figure>> figures;
-public:
-	void init();
+
+	bool init();
+
 	void listToSTDOUT() const;
-	void deleteFigure(int ind);
-	void cloneFigure(int ind);
-	void saveToFile() const;
+	void deleteFigure();
+	void duplicateFigure();
+	int saveToFile() const;
+public:
+	void run(); 
 };

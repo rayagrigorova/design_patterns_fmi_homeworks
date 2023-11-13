@@ -9,6 +9,10 @@ StreamFigureFactory::StreamFigureFactory(std::istream& is) : inputStream(is){
 }
 
 std::unique_ptr<Figure> StreamFigureFactory::create() {
+    if (!inputStream.good()) {
+        std::cerr << "Input stream is not okay for reading." << std::endl;
+        return nullptr;
+    }
     try {
         std::string data;
         if (std::getline(inputStream, data)) {

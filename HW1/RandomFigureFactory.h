@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FigureFactory.h"
+#include <random> 
 
 class RandomFigureFactory : public FigureFactory {
 	std::random_device rand_dev;

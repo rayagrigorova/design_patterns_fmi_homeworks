@@ -4,8 +4,7 @@
 #include "RandomFigureFactory.h"
 #include "StreamFigureFactory.h"
 
-std::unique_ptr<FigureFactory> AbstractFigureFactory::create(std::string str)
-{
+std::unique_ptr<FigureFactory> AbstractFigureFactory::create(std::string str) {
 	if (str == "Random") {
 		return std::make_unique<RandomFigureFactory>();
 	}
@@ -13,11 +12,12 @@ std::unique_ptr<FigureFactory> AbstractFigureFactory::create(std::string str)
 		return std::make_unique<StreamFigureFactory>(std::cin);
 	}
 	if (str == "File") {
+		std::cout << "Please, enter a file name: " << std::endl;
 		std::string fileName;
 		std::cin >> fileName;
 
-		std::ofstream ofs(fileName);
-		return std::make_unique<StreamFigureFactory>(ofs);
+		std::ifstream ifs(fileName);
+		return std::make_unique<StreamFigureFactory>(ifs);
 	}
 	else {
 		return nullptr;
