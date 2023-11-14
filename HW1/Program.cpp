@@ -10,6 +10,7 @@ bool Program::init(){
 	std::string ans;
 	std::cin >> ans;
 
+	// TODO: don't create an instance of abstract factory here, use getInstance()
 	std::unique_ptr<AbstractFigureFactory> abstractFactory = std::make_unique<AbstractFigureFactory>();
 	std::unique_ptr<FigureFactory> factory = abstractFactory->create(ans);
 	
@@ -21,6 +22,7 @@ bool Program::init(){
 
 		for (int i = 0; i < count; i++) {
 			std::unique_ptr<Figure> fig = factory->create();
+			// TODO: resize the vector once since the number of figures is known and use std::emplace() 
 			figures.push_back(std::move(fig));
 		}
 		return true;
@@ -99,6 +101,7 @@ void Program::run() {
 		return;
 	}
 
+	//TODO: this loop could be more elegant if it's a do while loop 
 	bool flag = true;
 	while (flag) {
 		char ch;

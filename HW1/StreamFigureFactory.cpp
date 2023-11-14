@@ -8,6 +8,8 @@ StreamFigureFactory::StreamFigureFactory(std::istream& is) : inputStream(is){
 
 }
 
+// TODO: create a move copy constructor 
+
 std::unique_ptr<Figure> StreamFigureFactory::create() {
     if (!inputStream) {
         std::cerr << "Input stream is not okay for reading." << std::endl;

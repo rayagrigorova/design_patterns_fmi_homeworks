@@ -5,8 +5,10 @@
 
 #include "FigureFactory.h"
 
+// TODO: make the AbstractFigureFactory class singleton and call getInstance() to it 
+
 class AbstractFigureFactory {
 public:
-	virtual std::unique_ptr<FigureFactory> create(std::string str);
+	virtual std::unique_ptr<FigureFactory> create(const std::string& str);
 };
 

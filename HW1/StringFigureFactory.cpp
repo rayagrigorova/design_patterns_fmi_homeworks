@@ -10,27 +10,28 @@ StringFigureFactory::StringFigureFactory() : ss("") {
 
 }
 
-StringFigureFactory::StringFigureFactory(std::string str) : ss(str){
+StringFigureFactory::StringFigureFactory(std::string str) : ss(std::move(str)){
 
 }
 
+// TODO: read the data from a stream, not from a string stream
+// Define the methods from the namespace as private class methods 
 namespace {
-    // Functions to be used in StringFigureFactory's create()
-    std::unique_ptr<Figure> createTriangle(std::stringstream& ss) {
+    std::unique_ptr<Figure> createTriangle(std::istream& is) {
         double a, b, c;
-        ss >> a >> b >> c;
+        is >> a >> b >> c;
         return std::make_unique<Triangle>(a, b, c);
     }
 
-    std::unique_ptr<Figure> createCircle(std::stringstream& ss) {
+    std::unique_ptr<Figure> createCircle(std::istream& is) {
         double r;
-        ss >> r;
+        is >> r;
         return std::make_unique<Circle>(r);
     }
 
-    std::unique_ptr<Figure> createRectangle(std::stringstream& ss) {
+    std::unique_ptr<Figure> createRectangle(std::istream& is) {
         double a, b;
-        ss >> a >> b;
+        is >> a >> b;
         return std::make_unique<Rectangle>(a, b);
     }
 }
@@ -38,7 +39,8 @@ namespace {
 // Create figure from string representation 
 std::unique_ptr<Figure> StringFigureFactory::create() {
     if (!ss) {
-        throw std::invalid_argument("String already read");
+        return nullptr;
+        /*throw std::invalid_argument("String already read");*/
     }
 
     try {
@@ -54,7 +56,8 @@ std::unique_ptr<Figure> StringFigureFactory::create() {
         if (type == "rectangle") {
             return createRectangle(ss);
         }
-        throw std::invalid_argument("Invalid shape type");
+        /*throw std::invalid_argument("Invalid shape type");*/
+        return nullptr;
     }
 
     catch (std::invalid_argument& e) {
