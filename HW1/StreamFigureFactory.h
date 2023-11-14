@@ -7,5 +7,9 @@ class StreamFigureFactory : public FigureFactory {
 
 public:
 	StreamFigureFactory(std::istream& is);
+	StreamFigureFactory(std::istream&& is) noexcept;
 	std::unique_ptr<Figure> create() override;
+
+	static std::unique_ptr<Figure> createFigure(std::istream& is);
+
 };

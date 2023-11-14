@@ -2,10 +2,8 @@
 
 #include "FigureFactory.h"
 
-#include <sstream>
-
 class StringFigureFactory : public FigureFactory {
-	std::stringstream ss;
+	std::string s;
 public:
 	StringFigureFactory();
 	StringFigureFactory(std::string str);
