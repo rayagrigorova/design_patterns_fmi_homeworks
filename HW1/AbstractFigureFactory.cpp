@@ -11,25 +11,25 @@ std::unique_ptr<FigureFactory> AbstractFigureFactory::create(const std::string& 
 	if (str == "STDIN") {
 		return std::make_unique<StreamFigureFactory>(std::cin);
 	}
-	// TODO: the lines of code 15 to 28 are problematic 
-	// They are causing a memoty leak. Solution: add a move copy constructor to StreamFigureFactory
-	// and use it here 
 	if (str == "File") {
 		std::cout << "Please, enter a file name: " << std::endl;
 		std::string fileName;
 		std::cin >> fileName;
 
-		std::ifstream* ifs = new std::ifstream(fileName);
+		std::ifstream ifs(fileName);
 
-		if (!ifs->is_open()) {
+		if (!ifs.is_open()) {
 			std::cerr << "Error opening file: " << fileName << std::endl;
-			delete ifs;
 			return nullptr;
 		}
-		//rvalue ref
-		return std::make_unique<StreamFigureFactory>(*ifs);
+		return std::make_unique<StreamFigureFactory>(std::move(ifs));
 	}
 	else {
 		return nullptr;
 	}
+}
+
+AbstractFigureFactory& AbstractFigureFactory::getInstance(){
+	static AbstractFigureFactory f;
+	return f;
 }

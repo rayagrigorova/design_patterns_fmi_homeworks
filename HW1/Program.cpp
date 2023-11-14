@@ -11,8 +11,7 @@ bool Program::init(){
 	std::cin >> ans;
 
 	// TODO: don't create an instance of abstract factory here, use getInstance()
-	std::unique_ptr<AbstractFigureFactory> abstractFactory = std::make_unique<AbstractFigureFactory>();
-	std::unique_ptr<FigureFactory> factory = abstractFactory->create(ans);
+	std::unique_ptr<FigureFactory> factory = AbstractFigureFactory::getInstance().create(ans);
 	
 	if (ans == "Random" || ans == "STDIN") {
 		std::cout << "Please, enter the number of figures to generate" << std::endl;

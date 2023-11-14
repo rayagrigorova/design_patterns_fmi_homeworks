@@ -30,7 +30,7 @@ void Circle::calculatePerimeter() {
 }
 
 void Circle::calculateString() {
-	str += "circle";
+	str += "circle ";
 	str += std::to_string(r);
 }
 
