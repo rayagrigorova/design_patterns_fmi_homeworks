@@ -1,15 +1,9 @@
-#include <random>
 #include <cassert>
 
 #include "RandomFigureFactory.h"
-#include "Triangle.h"
-#include "Circle.h"
-#include "Rectangle.h"
+#include "Figure.h"
 
 // TODO: use enum class for the different shapes 
-const int TRIANGLE_TYPE = 0;
-const int CIRCLE_TYPE = 1;
-const int RECTANGLE_TYPE = 2;
 
 namespace {
     // Functions to be used in StringFigureFactory's create()
@@ -39,30 +33,24 @@ namespace {
 }
 
 std::unique_ptr<Figure> RandomFigureFactory::create() {
-    // TODO: make range_from and range_to class members and initialize them in the constructor 
-
-    const int range_from = 1;
-    const int range_to = 10000;
-    const int numberOfShapes = 3;
-
-    // TODO: make distr and typeDistr class members too 
-    std::uniform_real_distribution<double>  distr(range_from, range_to);
-    std::uniform_int_distribution<int>  typeDistr(0, numberOfShapes - 1);
-
     int type = typeDistr(generator);
 
     switch (type) {
-    case TRIANGLE_TYPE:
+    case static_cast<int>(Shapes::triangle):
         return createTriangle(distr, generator);
-    case CIRCLE_TYPE: 
+    case static_cast<int>(Shapes::circle):
         return createCircle(distr, generator);
-    case RECTANGLE_TYPE:
+    case static_cast<int>(Shapes::rectangle):
         return createRectangle(distr, generator);
     }
     assert(false);
     return nullptr;
 }
 
-// initialize range_from and range_to here
-RandomFigureFactory::RandomFigureFactory() : rand_dev(), generator(rand_dev()) {
+RandomFigureFactory::RandomFigureFactory() : rand_dev(), generator(rand_dev()), range_from(1), range_to(10000),
+                                             distr(range_from, range_to), typeDistr(0, numberOfShapes - 1){
+}
+
+RandomFigureFactory::RandomFigureFactory(int range_from, int range_to) : rand_dev(), generator(rand_dev()), range_from(range_from), range_to(range_to),
+                                                                         distr(range_from, range_to), typeDistr(0, numberOfShapes - 1) {
 }
