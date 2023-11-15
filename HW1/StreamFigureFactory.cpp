@@ -4,16 +4,13 @@
 #include "StreamFigureFactory.h"
 #include "StringFigureFactory.h"
 
-#include "Rectangle.h"
-#include "Circle.h"
-#include "Triangle.h"
+#include "Figure.h"
 
 StreamFigureFactory::StreamFigureFactory(std::istream& is) : inputStream(is){
 
 }
 
-// TODO: create a move copy constructor 
-StreamFigureFactory::StreamFigureFactory(std::istream&& is) noexcept : inputStream(std::move(is)) {
+StreamFigureFactory::StreamFigureFactory(std::ifstream&& ifs) : file(std::move(ifs)), inputStream(file) {
 
 }
 

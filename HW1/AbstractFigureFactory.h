@@ -21,7 +21,7 @@ public:
 	AbstractFigureFactory(const AbstractFigureFactory&) = delete;
 	AbstractFigureFactory(AbstractFigureFactory&&) = delete;
 
-	AbstractFigureFactory& operator =(const AbstractFigureFactory&) = delete;
+	AbstractFigureFactory& operator=(const AbstractFigureFactory&) = delete;
 	AbstractFigureFactory& operator=(AbstractFigureFactory&&) = delete;
 };
 

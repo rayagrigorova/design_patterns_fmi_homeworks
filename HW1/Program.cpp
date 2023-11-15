@@ -10,7 +10,6 @@ bool Program::init(){
 	std::string ans;
 	std::cin >> ans;
 
-	// TODO: don't create an instance of abstract factory here, use getInstance()
 	std::unique_ptr<FigureFactory> factory = AbstractFigureFactory::getInstance().create(ans);
 	
 	if (ans == "Random" || ans == "STDIN") {
@@ -19,10 +18,17 @@ bool Program::init(){
 		std::cin >> count; 
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+		if (count < 0) {
+			std::cerr << "The number of figures entered is invalid";
+			return false;
+		}
+
+		// request that the vector capacity be at least enough to contain (figures.size() + count) elements
+		figures.reserve(figures.size() + count);
+
 		for (int i = 0; i < count; i++) {
 			std::unique_ptr<Figure> fig = factory->create();
-			// TODO: resize the vector once since the number of figures is known and use std::emplace() 
-			figures.push_back(std::move(fig));
+			figures.emplace_back(std::move(fig));
 		}
 		return true;
 	}
@@ -56,7 +62,8 @@ void Program::deleteFigure() {
 	std::cin >> ind;
 
 	if (ind < 0 || ind >= figures.size()) {
-		throw std::out_of_range("The delete index is invalid");
+		std::cerr << "The delete index is invalid";
+		return;
 	}
 
 	figures.erase(figures.begin() + ind);
@@ -68,12 +75,12 @@ void Program::duplicateFigure() {
 	std::cin >> ind;
 
 	if (ind < 0 || ind >= figures.size()) {
-		throw std::out_of_range("The duplicate index is invalid");
+		std::cerr << "The duplicate index is invalid";
+		return;
 	}
 	figures.push_back(figures[ind]->clone());
 }
 
-// saveToFile() returns an integer so that it can return error codes 
 int Program::saveToFile() const {
 	std::cout << "Please enter the name of the file" << std::endl;
 	std::string filename;
@@ -96,13 +103,13 @@ int Program::saveToFile() const {
 }
 
 void Program::run() {
+	// If the initialization fails, the program will not run
 	if (!init()) {
 		return;
 	}
 
-	//TODO: this loop could be more elegant if it's a do while loop 
 	bool flag = true;
-	while (flag) {
+	do {
 		char ch;
 		std::cout << "Please, enter a command" << std::endl;
 		std::cout << "\'l\': list figures to STDOUT" << std::endl;
@@ -131,5 +138,5 @@ void Program::run() {
 		default:
 			std::cout << "The command you have entered is invalid" << std::endl;
 		}
-	}
+	} while (flag);
 }

@@ -3,10 +3,15 @@
 #include "RandomFigureFactory.h"
 #include "Figure.h"
 
-// TODO: use enum class for the different shapes 
+const int numberOfShapes = 3;
+
+enum class Shapes {
+    triangle,
+    circle,
+    rectangle
+};
 
 namespace {
-    // Functions to be used in StringFigureFactory's create()
     std::unique_ptr<Figure> createTriangle(std::uniform_real_distribution<double>&  distr, std::mt19937& generator) {
         double a, b, c;
         do {
@@ -47,10 +52,10 @@ std::unique_ptr<Figure> RandomFigureFactory::create() {
     return nullptr;
 }
 
-RandomFigureFactory::RandomFigureFactory() : rand_dev(), generator(rand_dev()), range_from(1), range_to(10000),
-                                             distr(range_from, range_to), typeDistr(0, numberOfShapes - 1){
+RandomFigureFactory::RandomFigureFactory() : randDev(), generator(randDev()), rangeFrom(1), rangeTo(10000),
+                                             distr(rangeFrom, rangeTo), typeDistr(0, numberOfShapes - 1){
 }
 
-RandomFigureFactory::RandomFigureFactory(int range_from, int range_to) : rand_dev(), generator(rand_dev()), range_from(range_from), range_to(range_to),
-                                                                         distr(range_from, range_to), typeDistr(0, numberOfShapes - 1) {
+RandomFigureFactory::RandomFigureFactory(int rangeFrom, int rangeTo) : randDev(), generator(randDev()), rangeFrom(rangeFrom), rangeTo(rangeTo),
+                                                                         distr(rangeFrom, rangeTo), typeDistr(0, numberOfShapes - 1) {
 }
