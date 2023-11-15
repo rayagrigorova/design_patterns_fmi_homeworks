@@ -49,6 +49,11 @@ bool Program::init(){
 }
 
 void Program::listToSTDOUT() const {
+	if (figures.size() == 0) {
+		std::cout << "The list of figures is empty" << std::endl;
+		return;
+	}
+
 	for (int i = 0; i < figures.size(); i++) {
 		std::cout << i << ". ";
 		std::cout << figures[i]->toString() << std::endl;
@@ -62,7 +67,7 @@ void Program::deleteFigure() {
 	std::cin >> ind;
 
 	if (ind < 0 || ind >= figures.size()) {
-		std::cerr << "The delete index is invalid";
+		std::cerr << "The delete index is invalid" << std::endl;
 		return;
 	}
 
@@ -75,7 +80,7 @@ void Program::duplicateFigure() {
 	std::cin >> ind;
 
 	if (ind < 0 || ind >= figures.size()) {
-		std::cerr << "The duplicate index is invalid";
+		std::cerr << "The duplicate index is invalid" << std::endl;
 		return;
 	}
 	figures.push_back(figures[ind]->clone());
