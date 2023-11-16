@@ -15,10 +15,16 @@ bool Program::init(){
 	if (ans == "Random" || ans == "STDIN") {
 		std::cout << "Please, enter the number of figures to generate" << std::endl;
 		int count = 0;
-		std::cin >> count; 
+
+		while (!(std::cin >> count)) {
+			std::cin.clear();  // clear the error flag
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
+			std::cout << "Invalid input. Please enter count" << std::endl;
+		}
+ 
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		if (count < 0) {
+		if (count <= 0) {
 			std::cerr << "The number of figures entered is invalid";
 			return false;
 		}
@@ -28,12 +34,19 @@ bool Program::init(){
 
 		for (int i = 0; i < count; i++) {
 			std::unique_ptr<Figure> fig = factory->create();
-			figures.emplace_back(std::move(fig));
+			if (fig != nullptr) {
+				figures.emplace_back(std::move(fig));
+			}
+			else {
+				std::cout << "Invalid figure" << std::endl;
+			}
 		}
-		return true;
 	}
 
 	else if (ans == "File") {
+		if (factory == nullptr) {
+			return false;
+		}
 		while (1) {
 			std::unique_ptr<Figure> fig = factory->create();
 			if (!fig) {
@@ -41,16 +54,21 @@ bool Program::init(){
 			}
 			figures.push_back(std::move(fig));
 		}
-		return true;
 	}
 	else {
 		return false;
 	}
+
+	if (figures.size() == 0) {
+		return false; // the case when all inputs were invalid 
+	}
+
+	return true;
 }
 
 void Program::listToSTDOUT() const {
 	if (figures.size() == 0) {
-		std::cout << "The list of figures is empty" << std::endl;
+		std::cout << "The list of figures is empty" << std::endl << std::endl;
 		return;
 	}
 
@@ -64,7 +82,12 @@ void Program::listToSTDOUT() const {
 void Program::deleteFigure() {
 	std::cout << "Please enter an index" << std::endl;
 	int ind;
-	std::cin >> ind;
+
+	while (!(std::cin >> ind)) {
+		std::cin.clear();  // clear the error flag
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
+		std::cout << "Invalid input. Please enter an index" << std::endl;
+	}
 
 	if (ind < 0 || ind >= figures.size()) {
 		std::cerr << "The delete index is invalid" << std::endl;
@@ -77,7 +100,12 @@ void Program::deleteFigure() {
 void Program::duplicateFigure() {
 	std::cout << "Please enter an index" << std::endl;
 	int ind;
-	std::cin >> ind;
+
+	while (!(std::cin >> ind)) {
+		std::cin.clear();  // clear the error flag
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
+		std::cout << "Invalid input. Please enter an index" << std::endl;
+	}
 
 	if (ind < 0 || ind >= figures.size()) {
 		std::cerr << "The duplicate index is invalid" << std::endl;
@@ -110,6 +138,7 @@ int Program::saveToFile() const {
 void Program::run() {
 	// If the initialization fails, the program will not run
 	if (!init()) {
+		std::cout << "Initialization failed" << std::endl;
 		return;
 	}
 
