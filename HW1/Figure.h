@@ -26,7 +26,7 @@ public:
 };
 
 class Circle : public Figure {
-	double r;
+	double r = 0;
 
 protected:
 	virtual void calculatePerimeter() override;
@@ -40,7 +40,7 @@ public:
 };
 
 class Rectangle : public Figure {
-	double a, b;
+	double a = 0, b = 0;
 
 protected:
 	virtual void calculatePerimeter() override;
@@ -54,7 +54,7 @@ public:
 };
 
 class Triangle : public Figure {
-	double a, b, c;
+	double a = 0, b = 0, c = 0;
 
 protected:
 	virtual void calculatePerimeter() override;
