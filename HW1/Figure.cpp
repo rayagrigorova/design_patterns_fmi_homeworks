@@ -114,6 +114,7 @@ Triangle::Triangle(double a, double b, double c) {
 void Triangle::calculatePerimeter() {
 	per = a + b + c;
 }
+
 void Triangle::calculateString() {
 	str += "triangle ";
 	str += std::to_string(a);
