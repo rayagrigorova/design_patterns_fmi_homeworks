@@ -25,8 +25,12 @@ bool Program::init(){
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		if (count <= 0) {
-			std::cerr << "The number of figures entered is invalid";
+			std::cerr << "The number of figures entered is invalid" << std::endl;
 			return false;
+		}
+
+		if (ans == "STDIN") {
+			std::cout << "Please, enter the figures" << std::endl;
 		}
 
 		// request that the vector capacity be at least enough to contain (figures.size() + count) elements
@@ -79,39 +83,38 @@ void Program::listToSTDOUT() const {
 	std::cout << std::endl;
 }
 
+namespace {
+	// This function will return -1 if the index is invalid and the index if it's valid 
+	int validateIndex(int size) {
+		std::cout << "Please enter an index" << std::endl;
+		int ind;
+
+		while (!(std::cin >> ind)) {
+			std::cin.clear();  // clear the error flag
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
+			std::cout << "Invalid input. Please enter an index" << std::endl;
+		}
+
+		if (ind < 0 || ind >= size) {
+			std::cerr << "The index is invalid" << std::endl;
+			return -1;
+		}
+		return ind;
+	}
+}
+
 void Program::deleteFigure() {
-	std::cout << "Please enter an index" << std::endl;
-	int ind;
-
-	while (!(std::cin >> ind)) {
-		std::cin.clear();  // clear the error flag
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
-		std::cout << "Invalid input. Please enter an index" << std::endl;
+	int ind = validateIndex(figures.size());
+	if (ind >= 0) {
+		figures.erase(figures.begin() + ind);
 	}
-
-	if (ind < 0 || ind >= figures.size()) {
-		std::cerr << "The delete index is invalid" << std::endl;
-		return;
-	}
-
-	figures.erase(figures.begin() + ind);
 }
 
 void Program::duplicateFigure() {
-	std::cout << "Please enter an index" << std::endl;
-	int ind;
-
-	while (!(std::cin >> ind)) {
-		std::cin.clear();  // clear the error flag
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // discard invalid input
-		std::cout << "Invalid input. Please enter an index" << std::endl;
+	int ind = validateIndex(figures.size());
+	if (ind >= 0) {
+		figures.push_back(figures[ind]->clone());
 	}
-
-	if (ind < 0 || ind >= figures.size()) {
-		std::cerr << "The duplicate index is invalid" << std::endl;
-		return;
-	}
-	figures.push_back(figures[ind]->clone());
 }
 
 int Program::saveToFile() const {

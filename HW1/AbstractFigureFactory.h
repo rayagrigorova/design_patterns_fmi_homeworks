@@ -5,8 +5,6 @@
 
 #include "FigureFactory.h"
 
-// TODO: make the AbstractFigureFactory class singleton and call getInstance() to it 
-
 class AbstractFigureFactory {
 protected:
 	AbstractFigureFactory() = default;

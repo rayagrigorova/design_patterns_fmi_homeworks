@@ -14,5 +14,4 @@ public:
 	std::unique_ptr<Figure> create() override;
 
 	static std::unique_ptr<Figure> createFigure(std::istream& is);
-
 };
