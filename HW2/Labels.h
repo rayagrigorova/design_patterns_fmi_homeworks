@@ -11,6 +11,7 @@ public:
 	// each time getText() is called. 
 	virtual std::string getText() { return ""; };
 	virtual ~Label() = default;
+
 	// Should the '==' function be virtual and in the base class 'Label'?
 	virtual bool operator==(const Label& other) const { return false; }
 };
