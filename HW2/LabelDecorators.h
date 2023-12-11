@@ -7,13 +7,9 @@
 #include "Labels.h"
 #include "Transformations.h"
 
-// What should I use instead of Class decoratorType? 
-// const std::type_info& decoratorType or a simple enum?
-//enum class DecoratorType {
-//	///
-//};
 
 // I am adding all decorators to one file to prevent scattering short pieces of code 
+// Should I seperate them into .cpp and .h files?
 
 // A base class for all decorators 
 class LabelDecoratorBase : public Label {
@@ -22,13 +18,12 @@ protected:
 public:
 	LabelDecoratorBase(Label& label) : label(label){}
 
-	// This is possible since Label is polymorphic 
-	virtual bool operator==(const Label& other) const{
-		if (dynamic_cast<const LabelDecoratorBase*>(&other)) {
-			const LabelDecoratorBase& otherDecorator = dynamic_cast<const LabelDecoratorBase&>(other);
+	bool operator==(const Label& other) const override{
+		const LabelDecoratorBase* otherPtr = dynamic_cast<const LabelDecoratorBase*>(&other);
+		if (!otherPtr) {
+			return false;
 		}
-
-		return Label::operator==(other);
+		return otherPtr->label == label;
 	}
 	
 	std::string getText() override {
@@ -77,9 +72,12 @@ public:
 	}
 
 	bool operator==(const Label& other) const override {
+		// This will recursively compare the labels of both decorators - the 
+		// labels could be text or other decorators 
 		if (!LabelDecoratorBase::operator==(other))return false;
-		const TextTransformationDecorator* ttd = dynamic_cast<const TextTransformationDecorator*>(&other);
 
+		const TextTransformationDecorator* ttd = dynamic_cast<const TextTransformationDecorator*>(&other);
+		// This will compare the text transformations - text transformations should also be comparable 
 		if (ttd) {
 			return ttd->t == t;
 		}
@@ -105,8 +103,8 @@ public:
 
 	bool operator==(const Label& other) const override {
 		if (!LabelDecoratorBase::operator==(other))return false;
-		const RandomTransformationDecorator* rtd = dynamic_cast<const RandomTransformationDecorator*>(&other);
 
+		const RandomTransformationDecorator* rtd = dynamic_cast<const RandomTransformationDecorator*>(&other);
 		if (rtd) {
 			// Can I compare vectors like this?
 			return rtd->transformations == transformations;
