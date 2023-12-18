@@ -38,7 +38,6 @@ public:
 
 class RichLabel : public SimpleLabel {
 public:
-	// Should I use the bridge pattern here? It sounds like overkill
 	std::string color, font;
 	size_t fontSize;
 

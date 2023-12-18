@@ -11,25 +11,34 @@ bool LabelDecoratorBase::operator==(const Label& other) const {
 }
 
 std::string LabelDecoratorBase::getText() {
+    // Delegate the getText() operation to the wrapped object
     return label.getText();
 }
 
-Label LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
+Label& LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
+    // If this is the decorator to remove 
     if (*this == toRemove) {
         return label;
     }
+    // If the label inside the current object is a decorator, try to remove 
+    // a decorator further down the chain. 
     if (dynamic_cast<LabelDecoratorBase*>(&label)) {
         label = dynamic_cast<LabelDecoratorBase*>(&label)->removeDecorator(toRemove);
         return *this;
     }
+    // This is the case when the label inside the current object is not a decorator,
+    // but an actual label. We have reached the end of the list but haven't found the decorator 
+    // to remove. 
     return *this;
 }
 
-Label LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
+Label& LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
+    // If target refers to a decorator 
     if (dynamic_cast<LabelDecoratorBase*>(&target)) {
         LabelDecoratorBase& ldb = dynamic_cast<LabelDecoratorBase&>(target);
         return ldb.removeDecorator(toRemove);
     }
+    // If target isn't a decorator, but an actual label, do nothing 
     return target;
 }
 
@@ -37,6 +46,7 @@ TextTransformationDecorator::TextTransformationDecorator(Label& label, TextTrans
     : t(t), LabelDecoratorBase(label) {}
 
 std::string TextTransformationDecorator::getText() {
+    // super::execute 
     std::string resultValue = LabelDecoratorBase::getText();
     return t.transform(resultValue);
 }
@@ -52,8 +62,11 @@ bool TextTransformationDecorator::operator==(const Label& other) const {
 }
 
 RandomTransformationDecorator::RandomTransformationDecorator(
-    Label& label, std::vector<std::unique_ptr<TextTransformation>>& transformations)
-    : transformations(transformations), gen(rd()), distrib(0, transformations.size() - 1), LabelDecoratorBase(label) {}
+    Label& label, std::vector<std::unique_ptr<TextTransformation>>&& transformations)
+    : distrib(0, transformations.size() - 1), gen(rd()), LabelDecoratorBase(label) {
+        // Move the object here. Otherwise, its size can't be used to initialize distrib
+        this->transformations = (std::move(transformations));
+    }
 
 std::string RandomTransformationDecorator::getText() {
     std::string resultValue = LabelDecoratorBase::getText();
@@ -65,8 +78,16 @@ bool RandomTransformationDecorator::operator==(const Label& other) const {
     if (!LabelDecoratorBase::operator==(other)) return false;
 
     const RandomTransformationDecorator* rtd = dynamic_cast<const RandomTransformationDecorator*>(&other);
+    
     if (rtd) {
-        return rtd->transformations == transformations;
+        if (transformations.size() != rtd->transformations.size()) return false;
+        
+        for (int i = 0; i < transformations.size(); ++i) {
+            if (!(*transformations[i] == *rtd->transformations[i])) {
+                return false;
+            }
+        }
+        return true;
     }
     return false;
 }

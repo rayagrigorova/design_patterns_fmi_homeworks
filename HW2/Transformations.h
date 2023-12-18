@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <typeinfo>
 
 // Add all transformations to one file to prevent scattering of code 
 
@@ -10,7 +11,7 @@ public:
 	virtual std::string transform(std::string text) const = 0;
 	virtual bool operator==(const TextTransformation& other) const {
 		// For most transformations, they should simply be of the same type to be equal
-		return typeid(other) == typeid(*this);
+		return typeid(other).name() == typeid(*this).name();
 	}
 };
 
@@ -46,6 +47,7 @@ class CensorTransformation : public TextTransformation {
 public:
 	CensorTransformation(std::string toCensor) : toCensor(toCensor){}
 	std::string transform(std::string text) const override;
+
 	bool operator==(const TextTransformation& other) const override;
 };
 
@@ -55,5 +57,6 @@ class ReplaceTransformation : public TextTransformation {
 public:
 	ReplaceTransformation(std::string toReplace, std::string replacement) : toReplace(toReplace), replacement(replacement){}
 	std::string transform(std::string text) const override;
+
 	bool operator==(const TextTransformation& other) const override;
 };
