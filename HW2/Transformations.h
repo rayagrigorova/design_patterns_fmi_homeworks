@@ -9,9 +9,10 @@
 class TextTransformation {
 public:
 	virtual std::string transform(std::string text) const = 0;
-	virtual bool operator==(const TextTransformation& other) const {
+
+	virtual bool equals(const TextTransformation& other) const {
 		// For most transformations, they should simply be of the same type to be equal
-		return typeid(other).name() == typeid(*this).name();
+		return typeid(*this) == typeid(other);
 	}
 };
 
@@ -48,7 +49,7 @@ public:
 	CensorTransformation(std::string toCensor) : toCensor(toCensor){}
 	std::string transform(std::string text) const override;
 
-	bool operator==(const TextTransformation& other) const override;
+	bool equals(const TextTransformation& other) const override;
 };
 
 class ReplaceTransformation : public TextTransformation {
@@ -58,5 +59,5 @@ public:
 	ReplaceTransformation(std::string toReplace, std::string replacement) : toReplace(toReplace), replacement(replacement){}
 	std::string transform(std::string text) const override;
 
-	bool operator==(const TextTransformation& other) const override;
+	bool equals(const TextTransformation& other) const override;
 };

@@ -10,31 +10,34 @@
 // The following class is a base decorator 
 class LabelDecoratorBase : public Label {
 protected:
-    Label& label;
+    // LabelDecoratorBase isn't responsible for managing the pointer it holds 
+    Label* label;
 
 public:
-    LabelDecoratorBase(Label& label);
+    LabelDecoratorBase(Label* label);
+    ~LabelDecoratorBase();
 
-    bool operator==(const Label& other) const override;
+    virtual bool equals(const LabelDecoratorBase& other) const;
 
     // This is the operation that each class inheriting from Label should implement
     std::string getText() override;
 
-    Label& removeDecorator(const LabelDecoratorBase& toRemove);
-    static Label& removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove);
+   Label* removeDecorator(const LabelDecoratorBase& toRemove);
+   static Label* removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove);
 };
 
 // The following classes are concrete decorators 
+
 class TextTransformationDecorator : public LabelDecoratorBase {
     // Making use of the Strategy pattern 
     TextTransformation& t;
 
 public:
-    TextTransformationDecorator(Label& label, TextTransformation& t);
+    TextTransformationDecorator(Label* label, TextTransformation& t);
 
     std::string getText() override;
 
-    bool operator==(const Label& other) const override;
+    bool equals(const LabelDecoratorBase& other) const override;
 };
 
 class RandomTransformationDecorator : public LabelDecoratorBase {
@@ -44,9 +47,9 @@ class RandomTransformationDecorator : public LabelDecoratorBase {
     std::vector<std::unique_ptr<TextTransformation>> transformations;
 
 public:
-    RandomTransformationDecorator(Label& label, std::vector<std::unique_ptr<TextTransformation>>&& transformations);
+    RandomTransformationDecorator(Label* label, std::vector<std::unique_ptr<TextTransformation>>&& transformations);
     
     std::string getText() override;
 
-    bool operator==(const Label& other) const override;
+    bool equals(const LabelDecoratorBase& other) const override;
 };
