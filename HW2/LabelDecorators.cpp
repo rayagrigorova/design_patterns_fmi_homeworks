@@ -40,14 +40,14 @@ Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
     return this; // Return this decorator
 }
 
-Label* removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
+Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
     // If target refers to a decorator 
     LabelDecoratorBase* ptr = dynamic_cast<LabelDecoratorBase*>(&target); 
     if (ptr) {
         return ptr->removeDecorator(toRemove);
     }
     // If target isn't a decorator, but an actual label, do nothing 
-    return nullptr;
+    return &target; 
 }
 
 TextTransformationDecorator::TextTransformationDecorator(Label* label, TextTransformation& t)

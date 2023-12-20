@@ -10,10 +10,7 @@ class TextTransformation {
 public:
 	virtual std::string transform(std::string text) const = 0;
 
-	virtual bool equals(const TextTransformation& other) const {
-		// For most transformations, they should simply be of the same type to be equal
-		return typeid(*this) == typeid(other);
-	}
+	virtual bool equals(const TextTransformation& other) const;
 };
 
 // The first few transformations don't require any additional information to be executed

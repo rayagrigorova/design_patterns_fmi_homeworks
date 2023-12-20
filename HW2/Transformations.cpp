@@ -3,6 +3,11 @@
 #include <regex>
 #include <string>
 
+bool TextTransformation::equals(const TextTransformation& other) const {
+	// For most transformations, they should simply be of the same type to be equal
+	return typeid(*this) == typeid(other);
+}
+
 std::string CapitalizeTransformation::transform(std::string text) const {
 	if (text.empty()) return "";
 	text[0] = std::toupper(static_cast<unsigned char>(text[0]));
