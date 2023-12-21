@@ -30,6 +30,8 @@ std::string DecorateTransformation::transform(std::string text) const {
 	return "-={ " + text + " }=-";
 }
 
+CensorTransformation::CensorTransformation(std::string toCensor) : toCensor(toCensor) {}
+
 std::string CensorTransformation::transform(std::string text) const {
 	return std::regex_replace(text, std::regex(toCensor), std::string(toCensor.size(), '*'));
 }
@@ -41,6 +43,9 @@ bool CensorTransformation::equals(const TextTransformation& other) const{
 	}
 	return false;
 }
+
+ReplaceTransformation::ReplaceTransformation(std::string toReplace, std::string replacement)
+	: toReplace(toReplace), replacement(replacement) {}
 
 std::string ReplaceTransformation::transform(std::string text) const {
 	return std::regex_replace(text, std::regex(toReplace), replacement);

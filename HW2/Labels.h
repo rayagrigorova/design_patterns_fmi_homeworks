@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 
 // This class defines the common interface for both decorators 

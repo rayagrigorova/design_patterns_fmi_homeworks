@@ -3,20 +3,19 @@
 #include <vector>
 #include <memory>
 
+#include "Transformations.h"
 #include "Labels.h"
 
-// What class should CompositeTransformation inherit from?
-// The SimpleLabel class has a text field, should I inherit from it?
-class CompositeTransformation : public Label{
-	std::vector<std::unique_ptr<Label>> children;
-	std::string text;
+// "This class will allow for a sequence of transformations to be treated as a single transformation"
+// The common interface for all transformations is TextTransformation, so inherit from it 
+class CompositeTransformation : public TextTransformation{
+	std::vector<std::unique_ptr<TextTransformation>> children;
 public:
-	CompositeTransformation(const std::string& text);
+	CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children);
 
-	void add(const Label& l);
-	void add(Label&& l);
+	void add(std::unique_ptr<TextTransformation>&& tt);
+	void remove(const TextTransformation& tt);
 
-	void remove(const Label& l);
-
-	virtual std::string getText() override;
+	virtual std::string transform(std::string text) const override;
+	bool equals(const TextTransformation& other) const override;
 };

@@ -43,7 +43,7 @@ public:
 class CensorTransformation : public TextTransformation {
 	std::string toCensor;
 public:
-	CensorTransformation(std::string toCensor) : toCensor(toCensor){}
+	CensorTransformation(std::string toCensor);
 	std::string transform(std::string text) const override;
 
 	bool equals(const TextTransformation& other) const override;
@@ -53,7 +53,7 @@ class ReplaceTransformation : public TextTransformation {
 	std::string toReplace;
 	std::string replacement;
 public:
-	ReplaceTransformation(std::string toReplace, std::string replacement) : toReplace(toReplace), replacement(replacement){}
+	ReplaceTransformation(std::string toReplace, std::string replacement);
 	std::string transform(std::string text) const override;
 
 	bool equals(const TextTransformation& other) const override;
