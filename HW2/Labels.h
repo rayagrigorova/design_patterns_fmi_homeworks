@@ -14,7 +14,8 @@ class SimpleLabel : public Label {
 public:
 	std::string value;
 
-	SimpleLabel(std::string value) : value(value){}
+	SimpleLabel() : value(""){}
+	SimpleLabel(const std::string& value) : value(value){}
 	
 	std::string getText() override {
 		return value;
@@ -26,5 +27,5 @@ public:
 	std::string color, font;
 	size_t fontSize;
 
-	RichLabel(std::string value, std::string color, std::string font, size_t fontSize) : SimpleLabel(value), color(color), font(font), fontSize(fontSize){}
+	RichLabel(const std::string& value,const std::string& color, const std::string& font, size_t fontSize) : SimpleLabel(value), color(color), font(font), fontSize(fontSize){}
 };

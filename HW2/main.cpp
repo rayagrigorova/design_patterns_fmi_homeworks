@@ -7,5 +7,7 @@
 #include "Transformations.h"
 
 int main() {
-    return 0;
+	STDINLabel l(0);
+	for (int i = 0; i < 100; i++)
+		std::cout << l.getText() << "\n";
 }
