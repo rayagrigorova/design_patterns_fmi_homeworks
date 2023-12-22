@@ -6,14 +6,16 @@
 
 #include "Labels.h"
 
-// TODO: StreamLabel instead of stdin label for a better level of abstraction 
-
+// The 'service' in my implementation will be the SimpleLabel - it provides getText functionality and contains some text. 
+// The proxy processes requests (getText() requests) and passes them to the service object. 
 class STDINLabel : public Label {
-	// TODO: keep reference to isteram object 
-	// for unit tests: use a string stream 
-	std::optional<std::string> text;
+	SimpleLabel label;
+	size_t timeout; 
+	// The number of calls is initially set to an invalid value to indicate that getText() hasn't been called yet 
+	int numberOfCalls = -1;
+
+	void enterText(); // a helper function to avoid code repetition 
 public:
-	// TIMEOUT: number of times to request the text before entering again 
-	// parameter in constructor 
+	STDINLabel(size_t timeout);
 	std::string getText() override;
 };
