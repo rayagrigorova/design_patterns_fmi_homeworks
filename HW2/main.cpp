@@ -1,6 +1,11 @@
 ﻿#include <iostream>
 
+#include "Labels.h"
+#include "CompositeTransformation.h"
+#include "LabelDecorators.h"
+#include "STDINLabel.h"
+#include "Transformations.h"
+
 int main() {
-    std::cout << "C++ Standard Version: " << __cplusplus << std::endl;
     return 0;
 }

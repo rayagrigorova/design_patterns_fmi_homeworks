@@ -2,6 +2,18 @@
 #include <cctype> 
 #include <regex>
 #include <string>
+#include <sstream>
+
+namespace {
+	std::string replaceAllOccurrences(std::string str, const std::string& toReplace, const std::string& replacement) {
+		size_t startPos = 0;
+		while ((startPos = str.find(toReplace, startPos)) != std::string::npos) {
+			str.replace(startPos, toReplace.length(), replacement);
+			startPos += replacement.length();
+		}
+		return str;
+	}
+}
 
 bool TextTransformation::equals(const TextTransformation& other) const {
 	// For most transformations, they should simply be of the same type to be equal
@@ -30,10 +42,12 @@ std::string DecorateTransformation::transform(std::string text) const {
 	return "-={ " + text + " }=-";
 }
 
-CensorTransformation::CensorTransformation(std::string toCensor) : toCensor(toCensor) {}
+CensorTransformation::CensorTransformation(std::string toCensor) : toCensor(toCensor){
+
+}
 
 std::string CensorTransformation::transform(std::string text) const {
-	return std::regex_replace(text, std::regex(toCensor), std::string(toCensor.size(), '*'));
+	return replaceAllOccurrences(text, toCensor, std::string(toCensor.size(), '*'));
 }
 
 bool CensorTransformation::equals(const TextTransformation& other) const{
@@ -45,10 +59,12 @@ bool CensorTransformation::equals(const TextTransformation& other) const{
 }
 
 ReplaceTransformation::ReplaceTransformation(std::string toReplace, std::string replacement)
-	: toReplace(toReplace), replacement(replacement) {}
+	: toReplace(toReplace), replacement(replacement) {
+
+}
 
 std::string ReplaceTransformation::transform(std::string text) const {
-	return std::regex_replace(text, std::regex(toReplace), replacement);
+	return replaceAllOccurrences(text, toReplace, replacement);
 }
 
 bool ReplaceTransformation::equals(const TextTransformation& other) const{
