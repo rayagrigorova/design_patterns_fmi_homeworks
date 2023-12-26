@@ -3,8 +3,45 @@
 LabelDecoratorBase::LabelDecoratorBase(Label* label) : label(label){}
 
 LabelDecoratorBase::~LabelDecoratorBase() {
-    // since LabelDecoratorBase is not the owner of the pointer, just set it to null
+    free();
+}
+
+LabelDecoratorBase::LabelDecoratorBase(const LabelDecoratorBase& other) {
+    copyFrom(other);
+}
+
+LabelDecoratorBase::LabelDecoratorBase(LabelDecoratorBase&& other) noexcept{
+    moveFrom(std::move(other));
+}
+
+LabelDecoratorBase& LabelDecoratorBase::operator=(const LabelDecoratorBase& other) {
+    if (this != &other) {
+        free();
+        copyFrom(other);
+    }
+    return *this;
+}
+
+LabelDecoratorBase& LabelDecoratorBase::operator=(LabelDecoratorBase&& other) noexcept{
+    if (this != &other) {
+        free();
+        moveFrom(std::move(other));
+    }
+    return *this;
+}
+
+void LabelDecoratorBase::free() {
+    delete label;
     label = nullptr;
+}
+
+void LabelDecoratorBase::copyFrom(const LabelDecoratorBase& other){
+    label = other.label->clone();
+}
+
+void LabelDecoratorBase::moveFrom(LabelDecoratorBase&& other) {
+    label = other.label;
+    other.label = nullptr;
 }
 
 bool LabelDecoratorBase::equals(const LabelDecoratorBase& other) const {

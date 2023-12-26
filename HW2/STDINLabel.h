@@ -18,4 +18,6 @@ class STDINLabel : public Label {
 public:
 	STDINLabel(size_t timeout);
 	std::string getText() override;
+
+	virtual Label* clone() const override;
 };

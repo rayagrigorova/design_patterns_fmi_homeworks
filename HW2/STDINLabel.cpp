@@ -44,3 +44,7 @@ std::string STDINLabel::getText() {
 	numberOfCalls++;
 	return label.getText();
 }
+
+Label* STDINLabel::clone() const {
+	return new STDINLabel(*this);
+}

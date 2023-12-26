@@ -10,11 +10,23 @@
 // The following class is a base decorator 
 class LabelDecoratorBase : public Label {
 protected:
-    // LabelDecoratorBase isn't responsible for managing the pointer it holds 
-    Label* label;
+    Label* label = nullptr;
+
+    void free();
+    void copyFrom(const LabelDecoratorBase& other);
+    void moveFrom(LabelDecoratorBase&& other);
 
 public:
     LabelDecoratorBase(Label* label);
+
+    // Big 6 
+    LabelDecoratorBase() = default;
+    LabelDecoratorBase(const LabelDecoratorBase& other);
+    LabelDecoratorBase(LabelDecoratorBase&& other) noexcept;
+
+    LabelDecoratorBase& operator=(const LabelDecoratorBase& other);
+    LabelDecoratorBase& operator=(LabelDecoratorBase&& other) noexcept;
+
     ~LabelDecoratorBase();
 
     virtual bool equals(const LabelDecoratorBase& other) const;

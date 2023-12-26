@@ -3,12 +3,17 @@
 #include "Labels.h"
 
 // This is the 'abstraction' base class in the bridge pattern
+// The 'implementation' is 
 class HelpLabel : public Label {
 protected:
     Label& label;
 public:
     HelpLabel(Label& label) : label(label){}
     virtual std::string getHelpText() const = 0;
+
+    std::string getText() override {
+        return label.getText();
+    }
 };
 
 class SimpleHelpLabel : public HelpLabel {
@@ -17,10 +22,6 @@ class SimpleHelpLabel : public HelpLabel {
 public:
     SimpleHelpLabel(Label& label, const std::string& helpText)
         : HelpLabel(label), helpText(helpText) {}
-
-    std::string getText() override {
-        return label.getText();
-    }
 
     std::string getHelpText() const override {
         return helpText;
