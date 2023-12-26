@@ -36,20 +36,25 @@ public:
 
    Label* removeDecorator(const LabelDecoratorBase& toRemove);
    static Label* removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove);
+
+   virtual Label* clone() const override;
 };
 
 // The following classes are concrete decorators 
 
 class TextTransformationDecorator : public LabelDecoratorBase {
     // Making use of the Strategy pattern 
-    TextTransformation& t;
+    const TextTransformation& t;
 
 public:
-    TextTransformationDecorator(Label* label, TextTransformation& t);
+    TextTransformationDecorator(Label* label, const TextTransformation& t);
+    // TextTransformationDecorator needs a copy constructor because of the clone() function 
+    TextTransformationDecorator(const TextTransformationDecorator& other);
 
     std::string getText() override;
 
     bool equals(const LabelDecoratorBase& other) const override;
+    virtual Label* clone() const override;
 };
 
 class RandomTransformationDecorator : public LabelDecoratorBase {
@@ -60,8 +65,10 @@ class RandomTransformationDecorator : public LabelDecoratorBase {
 
 public:
     RandomTransformationDecorator(Label* label, std::vector<std::unique_ptr<TextTransformation>>&& transformations);
-    
+    RandomTransformationDecorator(const RandomTransformationDecorator& other);
+
     std::string getText() override;
 
     bool equals(const LabelDecoratorBase& other) const override;
+    virtual Label* clone() const override;
 };

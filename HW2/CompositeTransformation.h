@@ -18,4 +18,6 @@ public:
 
 	virtual std::string transform(std::string text) const override;
 	bool equals(const TextTransformation& other) const override;
+
+	virtual std::unique_ptr<TextTransformation> clone() const override;
 };

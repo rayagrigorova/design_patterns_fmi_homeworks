@@ -1,6 +1,8 @@
 #include "LabelDecorators.h"
 
-LabelDecoratorBase::LabelDecoratorBase(Label* label) : label(label){}
+LabelDecoratorBase::LabelDecoratorBase(Label* label) {
+    this->label = label->clone();
+}
 
 LabelDecoratorBase::~LabelDecoratorBase() {
     free();
@@ -87,7 +89,11 @@ Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecorat
     return &target; 
 }
 
-TextTransformationDecorator::TextTransformationDecorator(Label* label, TextTransformation& t)
+Label* LabelDecoratorBase::clone() const {
+    return new LabelDecoratorBase(*this);
+}
+
+TextTransformationDecorator::TextTransformationDecorator(Label* label, const TextTransformation& t)
     : LabelDecoratorBase(label), t(t){}
 
 std::string TextTransformationDecorator::getText() {
@@ -105,12 +111,30 @@ bool TextTransformationDecorator::equals(const LabelDecoratorBase& other) const 
     return false;
 }
 
+Label* TextTransformationDecorator::clone() const {
+    return new TextTransformationDecorator(*this);
+}
+
+TextTransformationDecorator::TextTransformationDecorator(const TextTransformationDecorator& other) : t(other.t){
+
+}
+
 RandomTransformationDecorator::RandomTransformationDecorator(Label* label, 
     std::vector<std::unique_ptr<TextTransformation>>&& transformations)
     : distrib(0, transformations.size() - 1), gen(rd()), LabelDecoratorBase(label) {
         // Move the object here. Otherwise, its size can't be used to initialize distrib
         this->transformations = (std::move(transformations));
     }
+
+// It isn't possible to copy std::random_device, in the copy constructor only the vector is being copied 
+RandomTransformationDecorator::RandomTransformationDecorator(const RandomTransformationDecorator& other)
+    : LabelDecoratorBase(other), distrib(0, other.transformations.size() - 1), gen(rd()) {
+    transformations.resize(other.transformations.size());
+
+    for (int i = 0; i < other.transformations.size(); i++) {
+        transformations[i] = other.transformations[i]->clone();
+    }
+}
 
 std::string RandomTransformationDecorator::getText() {
     std::string resultValue = LabelDecoratorBase::getText();
@@ -132,4 +156,8 @@ bool RandomTransformationDecorator::equals(const LabelDecoratorBase& other) cons
         return true;
     }
     return false;
+}
+
+Label* RandomTransformationDecorator::clone() const {
+    return new RandomTransformationDecorator(*this);
 }

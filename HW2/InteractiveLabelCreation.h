@@ -39,7 +39,7 @@ std::unique_ptr<Label> addTransformation(std::unique_ptr<Label> label, TextTrans
 
 std::unique_ptr<Label> addRandomTransformationDecorator(std::unique_ptr<Label> label, 
 	std::vector<std::unique_ptr<TextTransformation>>&& transformations) {
-	return std::make_unique<TextTransformationDecorator>(label.release(), std::move(transformations));
+	return std::make_unique<RandomTransformationDecorator>(label.release(), std::move(transformations));
 }
 
 

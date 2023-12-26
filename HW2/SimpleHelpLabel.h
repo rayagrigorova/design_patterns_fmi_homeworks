@@ -26,4 +26,6 @@ public:
     std::string getHelpText() const override {
         return helpText;
     }
+
+    virtual Label* clone() const override { return new SimpleHelpLabel(label, helpText); }
 };
