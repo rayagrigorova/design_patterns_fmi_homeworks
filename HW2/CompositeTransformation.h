@@ -11,7 +11,7 @@
 class CompositeTransformation : public TextTransformation{
 	std::vector<std::unique_ptr<TextTransformation>> children;
 public:
-	CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children);
+	CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children) noexcept;
 
 	void add(std::unique_ptr<TextTransformation>&& tt);
 	void remove(const TextTransformation& tt);

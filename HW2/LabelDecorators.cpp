@@ -115,7 +115,7 @@ Label* TextTransformationDecorator::clone() const {
     return new TextTransformationDecorator(*this);
 }
 
-TextTransformationDecorator::TextTransformationDecorator(const TextTransformationDecorator& other) : t(other.t){
+TextTransformationDecorator::TextTransformationDecorator(const TextTransformationDecorator& other) : LabelDecoratorBase(other), t(other.t){
 
 }
 

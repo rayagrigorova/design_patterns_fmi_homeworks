@@ -2,7 +2,7 @@
 
 #include "CompositeTransformation.h"
 
-CompositeTransformation::CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children) : children(std::move(children)) {
+CompositeTransformation::CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children) noexcept : children(std::move(children)) {
 
 }
 

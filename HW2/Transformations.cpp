@@ -66,6 +66,10 @@ CensorTransformation::CensorTransformation(std::string toCensor) : toCensor(toCe
 
 }
 
+CensorTransformation::CensorTransformation(const CensorTransformation& other) : toCensor(other.toCensor){
+
+}
+
 std::string CensorTransformation::transform(std::string text) const {
 	return replaceAllOccurrences(text, toCensor, std::string(toCensor.size(), '*'));
 }
@@ -84,6 +88,10 @@ bool CensorTransformation::equals(const TextTransformation& other) const{
 
 ReplaceTransformation::ReplaceTransformation(std::string toReplace, std::string replacement)
 	: toReplace(toReplace), replacement(replacement) {
+
+}
+
+ReplaceTransformation::ReplaceTransformation(const ReplaceTransformation& other) : toReplace(other.toReplace), replacement(other.replacement){
 
 }
 

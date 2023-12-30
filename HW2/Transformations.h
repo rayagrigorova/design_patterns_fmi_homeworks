@@ -54,6 +54,7 @@ class CensorTransformation : public TextTransformation {
 	std::string toCensor;
 public:
 	CensorTransformation(std::string toCensor);
+	CensorTransformation(const CensorTransformation& other);
 	std::string transform(std::string text) const override;
 
 	bool equals(const TextTransformation& other) const override;
@@ -66,6 +67,7 @@ class ReplaceTransformation : public TextTransformation {
 	std::string replacement;
 public:
 	ReplaceTransformation(std::string toReplace, std::string replacement);
+	ReplaceTransformation(const ReplaceTransformation& other);
 	std::string transform(std::string text) const override;
 
 	bool equals(const TextTransformation& other) const override;
