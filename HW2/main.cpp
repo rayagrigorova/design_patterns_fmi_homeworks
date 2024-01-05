@@ -5,12 +5,16 @@
 #include "LabelDecorators.h"
 #include "STDINLabel.h"
 #include "Transformations.h"
+#include "CensorTransformationFactory.h"
 
 using namespace std;
 
 int main() {
-    STDINLabel label(1);
+        CensorTransformationFactory factory;
 
-    for(int i  = 0; i < 20; i++)
-    cout << label.getText() << '\n';
+        const CensorTransformation& shortWordTrans = factory.getFlyweight("test");
+        const CensorTransformation& longWordTrans = factory.getFlyweight("testing");
+
+         cout << (shortWordTrans.transform("This is a test sentence."));
+         cout << (longWordTrans.transform("testing this sentence.") );
 }
