@@ -6,11 +6,10 @@
 #include "Transformations.h"
 #include "Labels.h"
 
-// "This class will allow for a sequence of transformations to be treated as a single transformation"
-// The common interface for all transformations is TextTransformation, so inherit from it 
 class CompositeTransformation : public TextTransformation{
 	std::vector<std::unique_ptr<TextTransformation>> children;
 public:
+	CompositeTransformation() = default;
 	CompositeTransformation(std::vector<std::unique_ptr<TextTransformation>>&& children) noexcept;
 
 	void add(std::unique_ptr<TextTransformation>&& tt);

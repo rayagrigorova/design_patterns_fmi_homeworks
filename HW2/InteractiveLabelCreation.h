@@ -6,38 +6,17 @@
 #include "SimpleHelpLabel.h"
 #include "STDINLabel.h"
 
-// This file contains functions that allow the user to 
-// interactively create labels with different combinations of features 
+SimpleLabel createSimpleLabel(const std::string& value);
 
-// All of the functions below act as specialized factory methods for creating labels with specific features.
+RichLabel createRichLabel(const std::string& value, const std::string& color, const std::string& font, size_t fontSize);
 
-// The type of dependency injection I am using is constructor injection
-// (the dependencies are provided through a class constructor)
+STDINLabel createSTDINLabel(size_t timeout);
 
-SimpleLabel createSimpleLabel(const std::string& value) {
-	return SimpleLabel(value);
-}
+SimpleHelpLabel addHelpText(Label& label, const std::string& helpText); 
 
-RichLabel createRichLabel(const std::string& value, const std::string& color,
-	const std::string& font, size_t fontSize) {
-	return RichLabel(value, color, font, fontSize);
-}
+TextTransformationDecorator addTransformation(Label& label, const TextTransformation& t); 
 
-STDINLabel createSTDINLabel(size_t timeout) {
-	return STDINLabel(timeout);
-}
-
-SimpleHelpLabel addHelpText(Label& label, const std::string& helpText) {
-	return SimpleHelpLabel(label, helpText);
-}
-
-TextTransformationDecorator addTransformation(Label* label, const TextTransformation& t) {
-	return TextTransformationDecorator(label, t);
-}
-
-RandomTransformationDecorator addRandomTransformationDecorator(Label* label,
-	std::vector<std::unique_ptr<TextTransformation>>&& transformations) {
-	return RandomTransformationDecorator(label, std::move(transformations));
-}
+RandomTransformationDecorator addRandomTransformationDecorator(Label& label,
+	std::vector<std::unique_ptr<TextTransformation>>&& transformations); 
 
 

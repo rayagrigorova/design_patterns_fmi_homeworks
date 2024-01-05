@@ -36,7 +36,7 @@ std::unique_ptr<TextTransformation> CapitalizeTransformation::clone() const {
 }
 
 std::string TrimLeftTransformation::transform(std::string text) const {
-	// The used regex matches one or more whitespace
+	// The regex matches one or more whitespace
 	// characters at the beginning of the string. 
 	return std::regex_replace(text, std::regex("^\\s+"), "");
 }
@@ -46,7 +46,7 @@ std::unique_ptr<TextTransformation> TrimLeftTransformation::clone() const {
 }
 
 std::string TrimRightTransformation::transform(std::string text) const {
-	// The used regex matches one or more whitespace
+	// The regex matches one or more whitespace
 	// characters at the end of the string. 
 	return std::regex_replace(text, std::regex("\\s+$"), "");
 }
@@ -71,7 +71,7 @@ std::unique_ptr<TextTransformation> DecorateTransformation::clone() const {
 	return std::make_unique<DecorateTransformation>(*this);
 }
 
-CensorTransformation::CensorTransformation(std::string toCensor) : toCensor(toCensor){
+CensorTransformation::CensorTransformation(const std::string& toCensor) : toCensor(toCensor){
 
 }
 
@@ -95,7 +95,7 @@ bool CensorTransformation::equals(const TextTransformation& other) const{
 	return false;
 }
 
-ReplaceTransformation::ReplaceTransformation(std::string toReplace, std::string replacement)
+ReplaceTransformation::ReplaceTransformation(const std::string& toReplace, const std::string& replacement)
 	: toReplace(toReplace), replacement(replacement) {
 
 }

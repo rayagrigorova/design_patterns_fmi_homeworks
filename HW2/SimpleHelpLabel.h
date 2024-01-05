@@ -27,5 +27,7 @@ public:
         return helpText;
     }
 
-    virtual Label* clone() const override { return new SimpleHelpLabel(label, helpText); }
+    virtual Label* clone() const override {
+        return new SimpleHelpLabel(label, helpText);
+    }
 };

@@ -57,10 +57,10 @@ public:
 class CensorTransformation : public TextTransformation {
 	std::string toCensor;
 public:
-	CensorTransformation(std::string toCensor);
+	CensorTransformation(const std::string& toCensor);
 	CensorTransformation(const CensorTransformation& other);
-	std::string transform(std::string text) const override;
 
+	std::string transform(std::string text) const override;
 	bool equals(const TextTransformation& other) const override;
 
 	virtual std::unique_ptr<TextTransformation> clone() const override;
@@ -70,10 +70,10 @@ class ReplaceTransformation : public TextTransformation {
 	std::string toReplace;
 	std::string replacement;
 public:
-	ReplaceTransformation(std::string toReplace, std::string replacement);
+	ReplaceTransformation(const std::string& toReplace, const std::string& replacement);
 	ReplaceTransformation(const ReplaceTransformation& other);
-	std::string transform(std::string text) const override;
 
+	std::string transform(std::string text) const override;
 	bool equals(const TextTransformation& other) const override;
 
 	virtual std::unique_ptr<TextTransformation> clone() const override;

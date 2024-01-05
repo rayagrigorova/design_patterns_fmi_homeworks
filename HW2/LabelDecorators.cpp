@@ -1,7 +1,7 @@
 #include "LabelDecorators.h"
 
-LabelDecoratorBase::LabelDecoratorBase(Label* label) {
-    this->label = label->clone();
+LabelDecoratorBase::LabelDecoratorBase(Label& label) {
+    this->label = label.clone();
 }
 
 LabelDecoratorBase::~LabelDecoratorBase() {
@@ -38,6 +38,10 @@ void LabelDecoratorBase::free() {
 }
 
 void LabelDecoratorBase::copyFrom(const LabelDecoratorBase& other){
+    if (other.label == nullptr) {
+        label = nullptr;
+        return;
+    }
     label = other.label->clone();
 }
 
@@ -79,7 +83,7 @@ Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
 }
 
 Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
-    // If target refers to a decorator 
+    // If 'target' refers to a decorator 
     LabelDecoratorBase* ptr = dynamic_cast<LabelDecoratorBase*>(&target); 
     if (ptr) {
         return ptr->removeDecorator(toRemove);
@@ -92,12 +96,11 @@ Label* LabelDecoratorBase::clone() const {
     return new LabelDecoratorBase(*this);
 }
 
-TextTransformationDecorator::TextTransformationDecorator(Label* label, const TextTransformation& t)
+TextTransformationDecorator::TextTransformationDecorator(Label& label, const TextTransformation& t)
     : LabelDecoratorBase(label), t(t){}
 
-std::string TextTransformationDecorator::getText() {
-    // super::execute 
-    std::string resultValue = LabelDecoratorBase::getText();
+std::string TextTransformationDecorator::getText() { 
+    std::string resultValue = LabelDecoratorBase::getText(); // super::execute
     return t.transform(resultValue);
 }
 
@@ -118,10 +121,10 @@ TextTransformationDecorator::TextTransformationDecorator(const TextTransformatio
 
 }
 
-RandomTransformationDecorator::RandomTransformationDecorator(Label* label, 
+RandomTransformationDecorator::RandomTransformationDecorator(Label& label, 
     std::vector<std::unique_ptr<TextTransformation>>&& transformations)
     : distrib(0, transformations.size() - 1), gen(rd()), LabelDecoratorBase(label) {
-        // Move the object here. Otherwise, its size can't be used to initialize distrib
+        // Move the vector here. Otherwise, the vector's size can't be used to initialize distrib.
         this->transformations = (std::move(transformations));
     }
 

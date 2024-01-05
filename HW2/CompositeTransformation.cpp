@@ -28,12 +28,14 @@ std::string CompositeTransformation::transform(std::string text) const {
 }
 
 bool CompositeTransformation::equals(const TextTransformation& other) const {
-	if (typeid(*this) != typeid(other)) {
-		return false;
-	}
 	// For two composite transformations to be equal, they should contain the same 
 	// transformations in the same order
 	const CompositeTransformation* ptr = dynamic_cast<const CompositeTransformation*>(&other);
+	if (!ptr) {
+		return false;
+	}
+
+	// Compare the vectors 
 	if (ptr->children.size() != children.size()) {
 		return false;
 	}

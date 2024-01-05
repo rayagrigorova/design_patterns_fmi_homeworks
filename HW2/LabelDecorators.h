@@ -20,7 +20,7 @@ protected:
     void moveFrom(LabelDecoratorBase&& other);
 
 public:
-    LabelDecoratorBase(Label* label);
+    LabelDecoratorBase(Label& label);
 
     // Big 6 
     LabelDecoratorBase() = default;
@@ -50,7 +50,7 @@ class TextTransformationDecorator : public LabelDecoratorBase {
     const TextTransformation& t;
 
 public:
-    TextTransformationDecorator(Label* label, const TextTransformation& t);
+    TextTransformationDecorator(Label& label, const TextTransformation& t);
     TextTransformationDecorator(const TextTransformationDecorator& other);
 
     std::string getText() override;
@@ -66,7 +66,7 @@ class RandomTransformationDecorator : public LabelDecoratorBase {
     std::vector<std::unique_ptr<TextTransformation>> transformations;
 
 public:
-    RandomTransformationDecorator(Label* label, std::vector<std::unique_ptr<TextTransformation>>&& transformations);
+    RandomTransformationDecorator(Label& label, std::vector<std::unique_ptr<TextTransformation>>&& transformations);
     RandomTransformationDecorator(const RandomTransformationDecorator& other);
 
     std::string getText() override;
