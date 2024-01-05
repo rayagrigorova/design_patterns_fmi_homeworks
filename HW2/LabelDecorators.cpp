@@ -92,7 +92,7 @@ Label* LabelDecoratorBase::clone() const {
     return new LabelDecoratorBase(*this);
 }
 
-TextTransformationDecorator::TextTransformationDecorator(Label* label, TextTransformation& t)
+TextTransformationDecorator::TextTransformationDecorator(Label* label, const TextTransformation& t)
     : LabelDecoratorBase(label), t(t){}
 
 std::string TextTransformationDecorator::getText() {

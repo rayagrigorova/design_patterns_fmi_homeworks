@@ -27,17 +27,17 @@ STDINLabel createSTDINLabel(size_t timeout) {
 	return STDINLabel(timeout);
 }
 
-SimpleHelpLabel addHelpText(std::unique_ptr<Label> label, const std::string& helpText) {
-	return SimpleHelpLabel(*label, helpText);
+SimpleHelpLabel addHelpText(Label& label, const std::string& helpText) {
+	return SimpleHelpLabel(label, helpText);
 }
 
-TextTransformationDecorator addTransformation(std::unique_ptr<Label> label, TextTransformation& t) {
-	return TextTransformationDecorator(label.release(), t);
+TextTransformationDecorator addTransformation(Label* label, const TextTransformation& t) {
+	return TextTransformationDecorator(label, t);
 }
 
-RandomTransformationDecorator addRandomTransformationDecorator(std::unique_ptr<Label> label,
+RandomTransformationDecorator addRandomTransformationDecorator(Label* label,
 	std::vector<std::unique_ptr<TextTransformation>>&& transformations) {
-	return RandomTransformationDecorator(label.release(), std::move(transformations));
+	return RandomTransformationDecorator(label, std::move(transformations));
 }
 
 

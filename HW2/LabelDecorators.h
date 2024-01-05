@@ -47,10 +47,10 @@ public:
 
 class TextTransformationDecorator : public LabelDecoratorBase {
     // Making use of the Strategy pattern 
-    TextTransformation& t;
+    const TextTransformation& t;
 
 public:
-    TextTransformationDecorator(Label* label, TextTransformation& t);
+    TextTransformationDecorator(Label* label, const TextTransformation& t);
     TextTransformationDecorator(const TextTransformationDecorator& other);
 
     std::string getText() override;
