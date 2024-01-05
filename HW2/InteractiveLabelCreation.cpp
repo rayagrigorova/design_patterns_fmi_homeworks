@@ -1,13 +1,5 @@
 #include "InteractiveLabelCreation.h"
 
-// This file contains functions that allow the user to 
-// interactively create labels with different combinations of features 
-
-// All of the functions below act as specialized factory methods for creating labels with specific features.
-
-// The type of dependency injection I am using is constructor injection
-// (the dependencies are provided through a class constructor)
-
 SimpleLabel createSimpleLabel(const std::string& value) {
 	return SimpleLabel(value);
 }

@@ -6,7 +6,8 @@
 #include "Labels.h"
 #include "Transformations.h"
 
-// Label is the common class for both labels and decorators ('component')
+// Label is the common class for both concrete labels and decorators (the 'component' class)
+
 // The following class is a base decorator 
 class LabelDecoratorBase : public Label {
 protected:
@@ -34,7 +35,6 @@ public:
 
     virtual bool equals(const LabelDecoratorBase& other) const;
 
-    // This is the operation that each class inheriting from Label should implement
     std::string getText() override;
 
    Label* removeDecorator(const LabelDecoratorBase& toRemove);

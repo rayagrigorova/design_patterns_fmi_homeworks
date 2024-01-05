@@ -6,7 +6,7 @@
 // and components - the getText() function 
 class Label {
 public:
-	virtual std::string getText() { return ""; };
+	virtual std::string getText();
 	virtual ~Label() = default;
 	virtual Label* clone() const = 0;
 };
@@ -15,16 +15,12 @@ class SimpleLabel : public Label {
 public:
 	std::string value;
 
-	SimpleLabel() : value(""){}
-	SimpleLabel(const std::string& value) : value(value){}
+	SimpleLabel();
+	SimpleLabel(const std::string& value);
 
-	virtual Label* clone() const override {
-		return new SimpleLabel(this->value);
-	}
+	virtual Label* clone() const override;
 	
-	std::string getText() override {
-		return value;
-	}
+	std::string getText() override;
 };
 
 class RichLabel : public SimpleLabel {
@@ -32,10 +28,8 @@ public:
 	std::string color, font;
 	size_t fontSize;
 
-	RichLabel(const std::string& value,const std::string& color, const std::string& font, size_t fontSize) : SimpleLabel(value), color(color), font(font), fontSize(fontSize){}
-	RichLabel(const RichLabel& other) : SimpleLabel(other.value), color(other.color), font(other.font), fontSize(other.fontSize){}
+	RichLabel(const std::string& value, const std::string& color, const std::string& font, size_t fontSize);
+	RichLabel(const RichLabel& other);
 
-	virtual Label* clone() const override {
-		return new RichLabel(*this); 
-	}
+	virtual Label* clone() const override;
 };

@@ -31,7 +31,6 @@ std::string STDINLabel::getText() {
 		case 'Y':
 			enterText();
 			std::cout << "New label was saved\n";
-			numberOfCalls = 0;
 			break;
 		case 'N':
 		case 'n':

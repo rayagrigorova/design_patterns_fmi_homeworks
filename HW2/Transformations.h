@@ -4,7 +4,7 @@
 #include <typeinfo>
 #include <memory>
 
-// Add all transformations to one file to prevent scattering of code 
+// All transformations are added to one file to prevent scattering of code 
 
 // Base class for all transformations
 class TextTransformation {

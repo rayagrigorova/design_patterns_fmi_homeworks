@@ -50,12 +50,12 @@ void LabelDecoratorBase::moveFrom(LabelDecoratorBase&& other) {
     other.label = nullptr;
 }
 
+// If the types of the decorators are the same, then the decorators are equal 
+// This is the default behaviour of this function. It needs to be extended for concrete decorators. 
 bool LabelDecoratorBase::equals(const LabelDecoratorBase& other) const {
     if (typeid(*this) != typeid(other)) {
         return false;
     }
-    // If the types of the decorators are the same, then the decorators are equal 
-    // This is the default behaviour of this function. It needs to be extended for concrete decorators. 
     return true;
 }
 
@@ -142,7 +142,7 @@ RandomTransformationDecorator::RandomTransformationDecorator(const RandomTransfo
 }
 
 std::string RandomTransformationDecorator::getText() {
-    std::string resultValue = LabelDecoratorBase::getText();
+    std::string resultValue = LabelDecoratorBase::getText(); // super::execute
     int random_number = distrib(gen);
     return transformations[random_number]->transform(resultValue);
 }

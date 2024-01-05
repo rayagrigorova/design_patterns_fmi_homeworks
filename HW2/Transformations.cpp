@@ -6,7 +6,7 @@
 
 namespace {
 	// I added this function for replacements instead of using a regex because 
-	// replacing special symbols significantly complicated the code.
+	// replacing special symbols with regexes significantly complicated the code.
 	std::string replaceAllOccurrences(std::string str, const std::string& toReplace, const std::string& replacement) {
 		size_t startPos = 0;
 		// Search for the next occurance of 'toReplace', starting from startPos

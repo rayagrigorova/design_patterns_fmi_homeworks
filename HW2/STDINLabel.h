@@ -6,7 +6,7 @@
 
 #include "Labels.h"
 
-// The 'service' in my implementation will be the SimpleLabel - it provides getText functionality and contains some text. 
+// The 'service' in my implementation will be the SimpleLabel - it provides getText() functionality and contains some text. 
 // The proxy processes requests (getText() requests) and passes them to the service object. 
 class STDINLabel : public Label {
 	SimpleLabel label;

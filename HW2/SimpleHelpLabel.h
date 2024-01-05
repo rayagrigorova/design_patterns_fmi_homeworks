@@ -8,26 +8,16 @@ class HelpLabel : public Label {
 protected:
     Label& label;
 public:
-    HelpLabel(Label& label) : label(label){}
+    HelpLabel(Label& label);
     virtual std::string getHelpText() const = 0;
-
-    std::string getText() override {
-        return label.getText();
-    }
+    std::string getText() override;
 };
 
 class SimpleHelpLabel : public HelpLabel {
     std::string helpText;
 
 public:
-    SimpleHelpLabel(Label& label, const std::string& helpText)
-        : HelpLabel(label), helpText(helpText) {}
-
-    std::string getHelpText() const override {
-        return helpText;
-    }
-
-    virtual Label* clone() const override {
-        return new SimpleHelpLabel(label, helpText);
-    }
+    SimpleHelpLabel(Label& label, const std::string& helpText);
+    std::string getHelpText() const override;
+    virtual Label* clone() const override;
 };
