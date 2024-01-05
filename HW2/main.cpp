@@ -6,8 +6,11 @@
 #include "STDINLabel.h"
 #include "Transformations.h"
 
+using namespace std;
+
 int main() {
-	STDINLabel l(0);
-	for (int i = 0; i < 100; i++)
-		std::cout << l.getText() << "\n";
+    STDINLabel label(1);
+
+    for(int i  = 0; i < 20; i++)
+    cout << label.getText() << '\n';
 }

@@ -56,7 +56,6 @@ bool LabelDecoratorBase::equals(const LabelDecoratorBase& other) const {
 }
 
 std::string LabelDecoratorBase::getText() {
-    // since label isn't ownership of LabelDecoratorBase, it could be prematurely deleted 
     if (label == nullptr) {
         return "";
     }
@@ -76,7 +75,7 @@ Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
         label = decorator->removeDecorator(toRemove);
     }
 
-    return this; // Return this decorator
+    return this;
 }
 
 Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
@@ -93,7 +92,7 @@ Label* LabelDecoratorBase::clone() const {
     return new LabelDecoratorBase(*this);
 }
 
-TextTransformationDecorator::TextTransformationDecorator(Label* label, const TextTransformation& t)
+TextTransformationDecorator::TextTransformationDecorator(Label* label, TextTransformation& t)
     : LabelDecoratorBase(label), t(t){}
 
 std::string TextTransformationDecorator::getText() {
@@ -105,7 +104,7 @@ std::string TextTransformationDecorator::getText() {
 bool TextTransformationDecorator::equals(const LabelDecoratorBase& other) const {
     const TextTransformationDecorator* ttd = dynamic_cast<const TextTransformationDecorator*>(&other);
     if (ttd) {
-        // compare the transformations 
+        // Compare the transformations 
         return ttd->t.equals(t);
     }
     return false;
@@ -126,7 +125,10 @@ RandomTransformationDecorator::RandomTransformationDecorator(Label* label,
         this->transformations = (std::move(transformations));
     }
 
-// It isn't possible to copy std::random_device, in the copy constructor only the vector is being copied 
+/*  Since objects providing random numbers 
+    don't have copy constructors, they will
+    simply be initialized appropriately.
+*/
 RandomTransformationDecorator::RandomTransformationDecorator(const RandomTransformationDecorator& other)
     : LabelDecoratorBase(other), distrib(0, other.transformations.size() - 1), gen(rd()) {
     transformations.resize(other.transformations.size());
@@ -144,8 +146,8 @@ std::string RandomTransformationDecorator::getText() {
 
 bool RandomTransformationDecorator::equals(const LabelDecoratorBase& other) const {
     const RandomTransformationDecorator* rtd = dynamic_cast<const RandomTransformationDecorator*>(&other);
-    // compare the vectors of transformations 
     if (rtd) {
+        // Compare the vectors of transformations 
         if (transformations.size() != rtd->transformations.size()) return false;
         
         for (int i = 0; i < transformations.size(); ++i) {

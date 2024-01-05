@@ -14,6 +14,7 @@ void STDINLabel::enterText() {
 }
 
 std::string STDINLabel::getText() {
+	// The text hasn't been initialized yet 
 	if (numberOfCalls < 0) {
 		enterText();
 	}
@@ -30,6 +31,7 @@ std::string STDINLabel::getText() {
 		case 'Y':
 			enterText();
 			std::cout << "New label was saved\n";
+			numberOfCalls = 0;
 			break;
 		case 'N':
 		case 'n':
@@ -38,7 +40,6 @@ std::string STDINLabel::getText() {
 			break;
 		default:
 			std::cerr << "Invalid command\n";
-
 		}
 	}
 	numberOfCalls++;

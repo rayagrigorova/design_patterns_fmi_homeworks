@@ -5,10 +5,15 @@
 #include <sstream>
 
 namespace {
+	// I added this function for replacements instead of using a regex because 
+	// replacing special symbols significantly complicated the code.
 	std::string replaceAllOccurrences(std::string str, const std::string& toReplace, const std::string& replacement) {
 		size_t startPos = 0;
+		// Search for the next occurance of 'toReplace', starting from startPos
 		while ((startPos = str.find(toReplace, startPos)) != std::string::npos) {
+			// Replace the current matching 'toReplace' string 
 			str.replace(startPos, toReplace.length(), replacement);
+			// Continue the search from the first character after the replaced ocurrance
 			startPos += replacement.length();
 		}
 		return str;
@@ -22,7 +27,7 @@ bool TextTransformation::equals(const TextTransformation& other) const {
 
 std::string CapitalizeTransformation::transform(std::string text) const {
 	if (text.empty()) return "";
-	text[0] = std::toupper(static_cast<unsigned char>(text[0]));
+	text[0] = std::toupper(text[0]);
 	return text;
 }
 
@@ -31,6 +36,8 @@ std::unique_ptr<TextTransformation> CapitalizeTransformation::clone() const {
 }
 
 std::string TrimLeftTransformation::transform(std::string text) const {
+	// The used regex matches one or more whitespace
+	// characters at the beginning of the string. 
 	return std::regex_replace(text, std::regex("^\\s+"), "");
 }
 
@@ -39,6 +46,8 @@ std::unique_ptr<TextTransformation> TrimLeftTransformation::clone() const {
 }
 
 std::string TrimRightTransformation::transform(std::string text) const {
+	// The used regex matches one or more whitespace
+	// characters at the end of the string. 
 	return std::regex_replace(text, std::regex("\\s+$"), "");
 }
 

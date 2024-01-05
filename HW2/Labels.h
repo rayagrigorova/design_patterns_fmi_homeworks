@@ -17,8 +17,7 @@ public:
 
 	SimpleLabel() : value(""){}
 	SimpleLabel(const std::string& value) : value(value){}
-	SimpleLabel(const SimpleLabel& other) : value(other.value){}
-	virtual Label* clone() const override { return new SimpleLabel(*this); }
+	virtual Label* clone() const override { return new SimpleLabel(this->value); }
 	
 	std::string getText() override {
 		return value;
@@ -31,7 +30,7 @@ public:
 	size_t fontSize;
 
 	RichLabel(const std::string& value,const std::string& color, const std::string& font, size_t fontSize) : SimpleLabel(value), color(color), font(font), fontSize(fontSize){}
-	RichLabel(const RichLabel& other) : color(other.color), font(other.font), fontSize(other.fontSize){}
+	RichLabel(const RichLabel& other) : SimpleLabel(other.value), color(other.color), font(other.font), fontSize(other.fontSize){}
 
 	virtual Label* clone() const override { return new RichLabel(*this); }
 };

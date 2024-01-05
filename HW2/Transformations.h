@@ -12,9 +12,13 @@ public:
 	virtual ~TextTransformation() = default; 
 
 	virtual std::string transform(std::string text) const = 0;
-
 	virtual bool equals(const TextTransformation& other) const;
 
+	/* The Label interface uses Label* clone() (raw pointers) and
+	   TextTransformation uses std::unique_ptr<TextTransformation> clone() (smart opointers).
+	   Mixing the two types of pointers is generally considered bad practice,
+	   but due to the implementation of the decorator removal logic it is necessary.
+	*/
 	virtual std::unique_ptr<TextTransformation> clone() const = 0;
 };
 

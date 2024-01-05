@@ -6,10 +6,13 @@
 #include "Labels.h"
 #include "Transformations.h"
 
-// Label is the common class for both labels and decorators 
+// Label is the common class for both labels and decorators ('component')
 // The following class is a base decorator 
 class LabelDecoratorBase : public Label {
 protected:
+    // I used raw pointers instead of smart ones,
+    // because otherwise the implementation for decorator 
+    // removal becomes too awkward and complicated. 
     Label* label = nullptr;
 
     void free();
@@ -44,11 +47,10 @@ public:
 
 class TextTransformationDecorator : public LabelDecoratorBase {
     // Making use of the Strategy pattern 
-    const TextTransformation& t;
+    TextTransformation& t;
 
 public:
-    TextTransformationDecorator(Label* label, const TextTransformation& t);
-    // TextTransformationDecorator needs a copy constructor because of the clone() function 
+    TextTransformationDecorator(Label* label, TextTransformation& t);
     TextTransformationDecorator(const TextTransformationDecorator& other);
 
     std::string getText() override;

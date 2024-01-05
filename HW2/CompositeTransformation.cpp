@@ -47,10 +47,13 @@ bool CompositeTransformation::equals(const TextTransformation& other) const {
 }
 
 std::unique_ptr<TextTransformation> CompositeTransformation::clone() const {
-	std::vector<std::unique_ptr<TextTransformation>> clonedChildren(children.size());
-	for (int i = 0; i < children.size(); i++) {
-		clonedChildren[i] = children[i]->clone();
+	std::vector<std::unique_ptr<TextTransformation>> clonedChildren;
+	clonedChildren.reserve(children.size());
+
+	for (const auto& child : children) {
+		clonedChildren.push_back(child->clone());
 	}
+
 	return std::make_unique<CompositeTransformation>(std::move(clonedChildren));
 }
 

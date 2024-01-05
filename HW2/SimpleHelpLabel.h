@@ -3,7 +3,7 @@
 #include "Labels.h"
 
 // This is the 'abstraction' base class in the bridge pattern
-// The 'implementation' is 
+// The 'implementation' is 'Label'
 class HelpLabel : public Label {
 protected:
     Label& label;
