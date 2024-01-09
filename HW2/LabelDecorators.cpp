@@ -77,13 +77,15 @@ Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
 
     // Check if the wrapped label is also a decorator
     LabelDecoratorBase* decorator = dynamic_cast<LabelDecoratorBase*>(label);
+    LabelDecoratorBase* copyThis = dynamic_cast<LabelDecoratorBase*>(this->clone());
+
     if (decorator) {
-        label = decorator->removeDecorator(toRemove);
+        copyThis->label = decorator->removeDecorator(toRemove);
     }
 
     // This is done in the cases if the label is a decorator (to keep it on top of the list) 
     // or if the label is text and not a decorator
-    return this->clone();
+    return copyThis;
 }
 
 Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
