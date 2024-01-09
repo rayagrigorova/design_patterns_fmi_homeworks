@@ -67,10 +67,12 @@ std::string LabelDecoratorBase::getText() {
     return label->getText();
 }
 
+// This function creates a copy of the current decorator (without adding 'toRemove' to it) 
 Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
-    // if this is the decorator to remove 
+    // If this is the decorator to remove 
     if (toRemove.equals(*this)) {
-        return label; 
+        Label* cloned = label->clone(); 
+        return cloned;
     }
 
     // Check if the wrapped label is also a decorator
@@ -79,7 +81,9 @@ Label* LabelDecoratorBase::removeDecorator(const LabelDecoratorBase& toRemove) {
         label = decorator->removeDecorator(toRemove);
     }
 
-    return this;
+    // This is done in the cases if the label is a decorator (to keep it on top of the list) 
+    // or if the label is text and not a decorator
+    return this->clone();
 }
 
 Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecoratorBase& toRemove) {
@@ -88,8 +92,8 @@ Label* LabelDecoratorBase::removeDecoratorFrom(Label& target, const LabelDecorat
     if (ptr) {
         return ptr->removeDecorator(toRemove);
     }
-    // If target isn't a decorator, but an actual label, do nothing 
-    return &target; 
+    // If target isn't a decorator, but an actual label
+    return target.clone(); 
 }
 
 Label* LabelDecoratorBase::clone() const {
