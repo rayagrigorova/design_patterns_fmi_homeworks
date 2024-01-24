@@ -1,6 +1,6 @@
 #include "AbstractBuilder.h"
 
-std::unique_ptr<AbstractFile> AbstractBuilder::buildFile(const fs::path& path) const {
+std::unique_ptr<AbstractFile> AbstractBuilder::buildFile(const fs::path& path) {
 	return std::make_unique<File>(path);
 }
 
@@ -10,8 +10,10 @@ namespace {
 	}
 }
 
-std::unique_ptr<AbstractFile> AbstractBuilder::buildDir(const fs::path& path) const {
+std::unique_ptr<AbstractFile> AbstractBuilder::buildDir(const fs::path& path) {
 	if (fs::is_symlink(path) || isWindowsShortcut(path)) {
+		// Check if the symbolic link/shortcut is about to create 
+		// a cycle. If yes, then don't add it. 
 		return buildLink(path);
 	}
 	
@@ -20,6 +22,7 @@ std::unique_ptr<AbstractFile> AbstractBuilder::buildDir(const fs::path& path) co
 		for (const fs::directory_entry& entry : fs::directory_iterator(path)) {
 			directory->add(buildDir(entry.path()));
 		}
+		visited.insert(directory);
 		return directory;
 	}
 	return buildFile(path);

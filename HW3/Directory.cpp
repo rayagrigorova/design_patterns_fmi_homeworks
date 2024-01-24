@@ -7,7 +7,12 @@ Directory::Directory(const fs::path& path) : AbstractFile(path){
 }
 
 void Directory::add(std::unique_ptr<AbstractFile>&& elem) {
-	// No need to recalculate the size of the whole directory
+	// Don't add null pointers.
+	// The passed element could be a null pointer if buildDir()
+	// returns nullptr (this is done to avoid cycles).
+	if (elem == nullptr) {
+		return;
+	}
 	cachedSize += elem->getSize();
 	children.push_back(std::move(elem));
 }

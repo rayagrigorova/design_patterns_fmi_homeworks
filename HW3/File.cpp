@@ -7,6 +7,7 @@ File::File(const fs::path& path) : AbstractFile(path){
 		std::uintmax_t fileSize = fs::file_size(path);
 		size = fileSize; 
 	}
+	// the function file_size() could throw an error (for example, if the file doesn't exist)
 	catch (const fs::filesystem_error& e) {
 		std::cerr << "An error ocurred: " << e.what() << std::endl;
 	}

@@ -42,7 +42,7 @@ namespace {
 }
 
 
-std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) const {
+std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
     if (fs::is_symlink(path)) {
         return buildDir(fs::read_symlink(path));
     }
