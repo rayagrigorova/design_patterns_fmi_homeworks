@@ -22,14 +22,16 @@ std::unique_ptr<AbstractFile> AbstractBuilder::buildDir(const fs::path& path) {
 		for (const fs::directory_entry& entry : fs::directory_iterator(path)) {
 			directory->add(buildDir(entry.path()));
 		}
-		visited.insert(directory);
+		visited.insert(directory->getPath());
 		return directory;
 	}
+	// The link points to a file
+	visited.insert(path);
 	return buildFile(path);
 }
 
 std::unique_ptr<AbstractFile> AbstractBuilder::build(const fs::path& path) {
-	buildDir(path);
+	return buildDir(path);
 }
 
 std::unique_ptr<AbstractFile>&& AbstractBuilder::getResult() {

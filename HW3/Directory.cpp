@@ -1,6 +1,5 @@
 #include "Directory.h"
-#include "File.h"
-
+#include "FileVisitor.h"
 
 Directory::Directory(const fs::path& path) : AbstractFile(path){
 	
@@ -9,7 +8,7 @@ Directory::Directory(const fs::path& path) : AbstractFile(path){
 void Directory::add(std::unique_ptr<AbstractFile>&& elem) {
 	// Don't add null pointers.
 	// The passed element could be a null pointer if buildDir()
-	// returns nullptr (this is done to avoid cycles).
+	// returns nullptr (returning nullptr is done to avoid creating cycles).
 	if (elem == nullptr) {
 		return;
 	}
@@ -17,7 +16,7 @@ void Directory::add(std::unique_ptr<AbstractFile>&& elem) {
 	children.push_back(std::move(elem));
 }
 
-const std::vector<std::unique_ptr<AbstractFile>>& Directory::getChildren() const {
+const std::vector<std::unique_ptr<AbstractFile>>& Directory::getChildren() const{
 	return children;
 }
 
@@ -25,6 +24,6 @@ std::uintmax_t Directory::getSize() const {
 	return cachedSize;
 }
 
-void Directory::accept(const FileVisitor& v) {
+void Directory::accept(const FileVisitor& v) const{
 	v.visitDirectory(*this);
 }

@@ -1,4 +1,5 @@
 #include "File.h"
+#include "FileVisitor.h"
 
 #include <iostream>
 
@@ -17,6 +18,6 @@ std::uintmax_t File::getSize() const {
 	return size;
 }
 
-void File::accept(const FileVisitor& v) {
+void File::accept(const FileVisitor& v) const{
 	v.visitFile(*this);
 }

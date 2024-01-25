@@ -4,9 +4,12 @@
 #include <shobjidl.h>
 #include <string>
 #include <ShlObj.h>
+#include <iostream>
 
 namespace {
+    // !!!
     // The section of code below was developed with the assistance of OpenAI's ChatGPT.
+
     std::string findShortcutPath(const std::wstring& shortcutPath) {
         IShellLink* psl; // IShellLink is used to work with shortcuts 
         WCHAR resolvedPath[MAX_PATH]; // array to store the resolved path
@@ -44,8 +47,18 @@ namespace {
 
 std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
     if (fs::is_symlink(path)) {
-        return buildDir(fs::read_symlink(path));
+        try {
+            fs::path link = fs::read_symlink(path);
+            visited.insert(link);
+            return buildDir(link);
+        }
+        catch (const fs::filesystem_error& e) {
+            std::cerr << "Error when reading symbolic link" << e.what() << "\n";
+            return nullptr;
+        }
     }
     // Handling a windows shortcut is not as straightforward
-    return buildDir(findShortcutPath(path));
+    fs::path link = findShortcutPath(path); 
+    visited.insert(link);
+    return buildDir(link);
 }

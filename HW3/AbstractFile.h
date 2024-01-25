@@ -2,13 +2,14 @@
 
 #include <filesystem>
 
-#include "FileVisitor.h"
+class FileVisitor;
 
 // this creates an alias for the namespace 
 namespace fs = std::filesystem;
 
 class AbstractFile {
 protected:
+	// Each abstrach file (directory/file) should have a path
 	fs::path path;
 public:
 	virtual ~AbstractFile() = default;
@@ -18,5 +19,6 @@ public:
 	virtual std::uintmax_t getSize() const = 0;
 	const fs::path& getPath() const;
 
-	virtual void accept(const FileVisitor& v) = 0;
+	// use double dispatch to execute the proper visitor method on the current instance
+	virtual void accept(const FileVisitor& v) const = 0;
 };

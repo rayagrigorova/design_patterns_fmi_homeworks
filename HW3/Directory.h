@@ -12,10 +12,9 @@ public:
 	Directory(const fs::path& path);
 	
 	void add(std::unique_ptr<AbstractFile>&& elem);
-	// a remove() function is not included
-	// because in the context of the program it would not make a lot of sense 
+	// a remove() function is not included because in the context of the program it would not make a lot of sense 
 	const std::vector<std::unique_ptr<AbstractFile>>& getChildren() const;
 	std::uintmax_t getSize() const override;
 
-	void accept(const FileVisitor& v) override;
+	void accept(const FileVisitor& v) const override;
 };

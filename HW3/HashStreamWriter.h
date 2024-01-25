@@ -9,5 +9,5 @@ class HashStreamWriter : public FileVisitor {
 public:
 	HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
 
-	void visitFile(File& file) const override;
+	void visitFile(const File& file) const override;
 };
