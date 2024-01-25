@@ -5,14 +5,15 @@
 #include <string>
 #include <ShlObj.h>
 #include <iostream>
+#include <windows.h>
 
 namespace {
     // !!!
     // The section of code below was developed with the assistance of OpenAI's ChatGPT.
 
     std::string findShortcutPath(const std::wstring& shortcutPath) {
-        IShellLink* psl; // IShellLink is used to work with shortcuts 
-        WCHAR resolvedPath[MAX_PATH]; // array to store the resolved path
+        IShellLinkW* psl;
+        WCHAR resolvedPath[MAX_PATH];
         HRESULT hres = CoInitialize(NULL); // this initializes a COM library for the current thread
 
         if (FAILED(hres)) {
