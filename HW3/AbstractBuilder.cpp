@@ -1,6 +1,6 @@
 #include "AbstractBuilder.h"
 
-std::unique_ptr<AbstractFile> AbstractBuilder::buildFile(const fs::path& path) {
+std::unique_ptr<File> AbstractBuilder::buildFile(const fs::path& path) {
 	return std::make_unique<File>(path);
 }
 
@@ -10,30 +10,22 @@ namespace {
 	}
 }
 
-std::unique_ptr<AbstractFile> AbstractBuilder::buildDir(const fs::path& path) {
-	if (fs::is_symlink(path) || isWindowsShortcut(path)) {
-		// Check if the symbolic link/shortcut is about to create 
-		// a cycle. If yes, then don't add it. 
-		return buildLink(path);
-	}
-	
+std::unique_ptr<Directory> AbstractBuilder::buildDir(const fs::path& path) {
 	if (fs::is_directory(path)) {
 		std::unique_ptr<Directory> directory = std::make_unique<Directory>(path);
 		for (const fs::directory_entry& entry : fs::directory_iterator(path)) {
-			directory->add(buildDir(entry.path()));
+			if (fs::is_symlink(entry.path()) || isWindowsShortcut(entry.path())) {
+				directory->add(buildLink(entry.path()));
+			}
+			else if (fs::is_directory(entry.path())) {
+				directory->add(buildDir(entry.path()));
+			}
+			else {
+				directory->add(buildFile(entry.path()));
+			}
 		}
 		visited.insert(directory->getPath());
 		return directory;
 	}
-	// The link points to a file
-	visited.insert(path);
-	return buildFile(path);
-}
-
-std::unique_ptr<AbstractFile> AbstractBuilder::build(const fs::path& path) {
-	return buildDir(path);
-}
-
-std::unique_ptr<AbstractFile>&& AbstractBuilder::getResult() {
-	return std::move(result);
+	return nullptr;
 }

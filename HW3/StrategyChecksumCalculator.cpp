@@ -12,6 +12,9 @@ StrategyChecksumCalculator::StrategyChecksumCalculator(std::unique_ptr<CryptoPP:
 
 }
 
+// !!!!!  
+// The implementation of the function below partly relies on help by OpenAI's ChatGPT 
+// (more specifically the parts related to the usage of the CryptoPP library to hash a string)
 std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
     if (!strategy) {
         std::cerr << "Hashing strategy not set.\n";
