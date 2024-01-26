@@ -11,8 +11,12 @@ namespace {
 }
 
 std::unique_ptr<Directory> AbstractBuilder::buildDir(const fs::path& path) {
+	if (visited.count(path)) {
+		return nullptr;
+	}
 	if (fs::is_directory(path)) {
 		std::unique_ptr<Directory> directory = std::make_unique<Directory>(path);
+		visited.insert(directory->getPath());
 		for (const fs::directory_entry& entry : fs::directory_iterator(path)) {
 			if (fs::is_symlink(entry.path()) || isWindowsShortcut(entry.path())) {
 				directory->add(buildLink(entry.path()));
@@ -24,7 +28,6 @@ std::unique_ptr<Directory> AbstractBuilder::buildDir(const fs::path& path) {
 				directory->add(buildFile(entry.path()));
 			}
 		}
-		visited.insert(directory->getPath());
 		return directory;
 	}
 	return nullptr;
