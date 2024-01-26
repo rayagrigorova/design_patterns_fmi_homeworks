@@ -28,7 +28,6 @@ TEST_CASE("Test Directory Opening in compDir", "[Directory]") {
         fs::path pathToFile1 = fs::path(getTestResourcePath("compDir/file1.docx"));
         fs::path pathToFile2 = fs::path(getTestResourcePath("compDir/file2.docx"));
 
-        std::cout << pathToFile1.string() << " " << pathToFile2.string() << "\n"  << "PLEASE PRINT THIS HELOOOOO ";
         std::unique_ptr<File> f1 = std::make_unique<File>(pathToFile1);
         std::unique_ptr<File> f2 = std::make_unique<File>(pathToFile2);
         compDir.add(std::move(f1));
