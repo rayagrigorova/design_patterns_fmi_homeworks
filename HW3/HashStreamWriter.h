@@ -1,9 +1,10 @@
 #pragma once
 
 #include "FileVisitor.h"
+#include "Observable.h"
 #include "StrategyChecksumCalculator.h"
 
-class HashStreamWriter : public FileVisitor {
+class HashStreamWriter : public FileVisitor, public Observable {
 	StrategyChecksumCalculator calc;
 	std::ostream& os; 
 public:
