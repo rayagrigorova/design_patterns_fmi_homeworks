@@ -3,8 +3,8 @@
 #include "Observable.h"
 #include "Observer.h"
 
-void Observable::subscribe(std::unique_ptr<Observer>&& o) {
-	subscribers.push_back(std::move(o));
+void Observable::subscribe(std::shared_ptr<Observer> o) {
+	subscribers.push_back(o);
 }
 
 void Observable::unsubscribe(size_t ind) {
@@ -17,6 +17,6 @@ void Observable::unsubscribe(size_t ind) {
 
 void Observable::notifySubscribers(const std::string& context) const {
 	for (size_t i = 0; i < subscribers.size(); i++) {
-		subscribers[i]->update(context);
+		subscribers[i]->update(*this, context);
 	}
 }

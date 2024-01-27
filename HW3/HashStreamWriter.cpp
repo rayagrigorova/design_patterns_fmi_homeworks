@@ -19,3 +19,8 @@ void HashStreamWriter::visitFile(const File& file) const {
 	os << "File path: " << file.getPath().string() << " Hash: " << resultHash << "\n";
 	ifs.close();
 }
+
+void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
+	Observable::subscribe(o);
+	calc.subscribe(o);
+}

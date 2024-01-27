@@ -24,8 +24,9 @@
 #include <whrlpool.h>
 
 #include "ChecksumCalculator.h"
+#include "Observable.h"
 
-class StrategyChecksumCalculator : public ChecksumCalculator {
+class StrategyChecksumCalculator : public ChecksumCalculator, public Observable {
 	std::unique_ptr<CryptoPP::HashTransformation> strategy = nullptr;
 public:
 	StrategyChecksumCalculator() = default;

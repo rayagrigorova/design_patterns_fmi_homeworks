@@ -29,6 +29,7 @@ std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
     CryptoPP::HashFilter hashFilter(*strategy, new CryptoPP::Redirector(encoder));
 
     char buffer[BUFFER_SIZE];
+    std::uintmax_t processed = 0;
 
     // If some error state flag is set to true(including eofbit),
     // good() will return false 
@@ -39,6 +40,9 @@ std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
         // the function gcount() will return  the number of characters extracted
         // by the last unformatted input operation
         std::streamsize count = is.gcount();
+        processed += count;
+        notifySubscribers(std::to_string(processed));
+
         if (count > 0) {
             // process 'buffer' as a CryptoPP::byte buffer
             // 'count' is the size of the data read from 'is' (in bytes)

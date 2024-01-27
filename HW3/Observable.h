@@ -8,12 +8,12 @@
 
 class Observable {
 protected:
-	std::vector<std::unique_ptr<Observer>> subscribers;
+	std::vector<std::shared_ptr<Observer>> subscribers;
 public:
 	virtual ~Observable() = default;
 
-	void subscribe(std::unique_ptr<Observer>&& o);
-	void unsubscribe(size_t ind); 
+	virtual void subscribe(std::shared_ptr<Observer> o);
+	virtual void unsubscribe(size_t ind); 
 
-	void notifySubscribers(const std::string& context) const; 
+	virtual void notifySubscribers(const std::string& context) const; 
 };

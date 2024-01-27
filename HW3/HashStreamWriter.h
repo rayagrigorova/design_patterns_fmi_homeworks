@@ -11,4 +11,6 @@ public:
 	HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
 
 	void visitFile(const File& file) const override;
+
+	virtual void subscribe(std::shared_ptr<Observer> o) override;
 };
