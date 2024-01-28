@@ -41,7 +41,7 @@ std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
         // by the last unformatted input operation
         std::streamsize count = is.gcount();
         processed += count;
-        notifySubscribers(std::to_string(processed));
+        notifySubscribers(std::to_string(count));
 
         if (count > 0) {
             // process 'buffer' as a CryptoPP::byte buffer
