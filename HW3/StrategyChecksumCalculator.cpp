@@ -56,5 +56,9 @@ std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
 }
 
 void StrategyChecksumCalculator::setAlgorithm(std::unique_ptr<CryptoPP::HashTransformation>&& newStrategy) {
+    if (newStrategy == nullptr) {
+        strategy = nullptr;
+        return;
+    }
     strategy = std::move(newStrategy);
 }

@@ -8,3 +8,8 @@ std::string getTestResourcePath(const std::string& resourceName) {
     fs::path testResourcesPath = fs::current_path().parent_path().parent_path() / "test" / "resources";
     return (testResourcesPath / resourceName).string();
 }
+
+
+int NullBuffer::overflow(int c) {
+        return c; 
+}

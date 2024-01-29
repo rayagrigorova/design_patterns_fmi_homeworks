@@ -10,15 +10,6 @@
 namespace fs = std::filesystem;
 #include "test_utils.h"
 
-#include <iostream>
-#include <streambuf>
-
-class NullBuffer : public std::streambuf {
-public:
-    int overflow(int c) override {
-        return c; 
-    }
-};
 
 // Files to be reported: word.docx, file.txt, house.png,
 // powerpoint.pptx, file3.txt, file.txt, file2.txt
@@ -31,10 +22,10 @@ TEST_CASE("Observer - visit dir1", "[Observer]") {
     auto alg = std::make_unique<CryptoPP::SHA256>();
     auto res = builder.buildDir(fs::path(getTestResourcePath("dir1")));
     HashStreamWriter writer(null_stream, std::move(alg));
-    writer.subscribe(std::make_unique<ProgressReporter>());
+    writer.subscribe(std::make_unique<ProgressReporter>(res->getSize()));
     writer.visitDirectory(*res);
 
-    // REQUIRE(false);
+    REQUIRE(false);
 }
 
 
@@ -48,10 +39,10 @@ TEST_CASE("Observer - visit dir2", "[Observer]") {
     auto alg = std::make_unique<CryptoPP::SHA256>();
     auto res = builder.buildDir(fs::path(getTestResourcePath("dir2")));
     HashStreamWriter writer(null_stream, std::move(alg));
-    writer.subscribe(std::make_unique<ProgressReporter>());
+    writer.subscribe(std::make_unique<ProgressReporter>(res->getSize()));
     writer.visitDirectory(*res);
 
-    // REQUIRE(false);
+    REQUIRE(false);
 }
 
 TEST_CASE("Observer - visit dir3 (with shortcut)", "[Observer]") {
@@ -63,10 +54,10 @@ TEST_CASE("Observer - visit dir3 (with shortcut)", "[Observer]") {
     auto alg = std::make_unique<CryptoPP::SHA256>();
     auto res = builder.buildDir(fs::path(getTestResourcePath("dir3")));
     HashStreamWriter writer(null_stream, std::move(alg));
-    writer.subscribe(std::make_unique<ProgressReporter>());
+    writer.subscribe(std::make_unique<ProgressReporter>(res->getSize()));
     writer.visitDirectory(*res);
 
-    // REQUIRE(false);
+    REQUIRE(false);
 }
 
 TEST_CASE("Observer - visit dir5 (with circular include)", "[Observer]") {
@@ -78,10 +69,10 @@ TEST_CASE("Observer - visit dir5 (with circular include)", "[Observer]") {
     auto alg = std::make_unique<CryptoPP::SHA256>();
     auto res = builder.buildDir(fs::path(getTestResourcePath("dir5")));
     HashStreamWriter writer(null_stream, std::move(alg));
-    writer.subscribe(std::make_unique<ProgressReporter>());
+    writer.subscribe(std::make_unique<ProgressReporter>(res->getSize()));
     writer.visitDirectory(*res);
     
-    // REQUIRE(false);
+    REQUIRE(false);
 }
 
 TEST_CASE("Observer - visit dir7 (With shortcut, single file)", "[Observer]") {
@@ -93,8 +84,8 @@ TEST_CASE("Observer - visit dir7 (With shortcut, single file)", "[Observer]") {
     auto alg = std::make_unique<CryptoPP::SHA256>();
     auto res = builder.buildDir(fs::path(getTestResourcePath("dir7")));
     HashStreamWriter writer(null_stream, std::move(alg));
-    writer.subscribe(std::make_unique<ProgressReporter>());
+    writer.subscribe(std::make_unique<ProgressReporter>(res->getSize()));
     writer.visitDirectory(*res);
 
-    // REQUIRE(false);
+    REQUIRE(false);
 }
