@@ -3,8 +3,13 @@
 #include "HashStreamWriter.h"
 #include "ProgressReporter.h"
 
-HashStreamWriter::HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy)
-	: os(os), calc(std::move(strategy)){}
+HashStreamWriter::HashStreamWriter(std::unique_ptr<CryptoPP::HashTransformation>&& strategy)
+	: calc(std::move(strategy)){}
+
+HashStreamWriter::HashStreamWriter(StrategyChecksumCalculator&& calc) : calc(std::move(calc)){
+
+}
+
 
 void HashStreamWriter::visitFile(const File& file) const {
 	// Open the file since the calculator works with an open stream
@@ -16,7 +21,7 @@ void HashStreamWriter::visitFile(const File& file) const {
 	notifySubscribers(file.getPath().filename().string());
 
 	std::string resultHash = calc.calculate(ifs);
-	os << "File path: " << file.getPath().string() << " Hash: " << resultHash << "\n";
+	std::cout << resultHash << " " << file.getPath().string() << "\n";
 	ifs.close();
 }
 
@@ -24,3 +29,5 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	Observable::subscribe(o);
 	calc.subscribe(o);
 }
+
+
