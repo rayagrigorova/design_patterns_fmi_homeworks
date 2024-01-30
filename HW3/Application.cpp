@@ -1,19 +1,19 @@
 #include <iostream>
 #include <memory>
-#include <algorithm>
 #include <vector>
 #include <filesystem>
+#include <fstream>
 #include <unordered_map>
 #include <functional> // for std::function, std::function is a function wrapper 
 
 #include "Application.h"
 
-#include "StrategyChecksumCalculator.h"
 #include "ReportWriter.h"
 #include "HashStreamWriter.h"
 #include "ProgressReporter.h"
 #include "FollowBuilder.h"
 #include "NoFollowBuilder.h"
+#include "File.h"
 
 namespace fs = std::filesystem;
 
@@ -109,8 +109,7 @@ void Application::chooseAlgorithm() {
 }
 
 void Application::displayReport() {
-	std::cout << "Do you want a report of all files and their sizes to be scanned before the actual scan is started?" << std::endl;
-	std::cout << "Enter 'y' for 'yes' and 'n' for 'no'." << std::endl;
+	std::cout << "Do you want a report of all files and their sizes to be scanned before the actual scan is started (y/n)?" << std::endl;
 
 	while (1) {
 		char input;
@@ -161,7 +160,43 @@ void Application::buildDirectory() {
 }
 
 void Application::startScanning() {
-	HashStreamWriter writer(StrategyChecksumCalculator(std::move(alg)));
+	std::cout << "Please, enter the name of the file where the hashes will be saved: " << std::endl;
+	std::string fileName;
+	std::getline(std::cin, fileName);
+
+	if (std::filesystem::exists(fileName)) {
+		std::cout << "File already exists. Do you wish to overwrite it? (y/n):" << std::endl;
+		char ans;
+		while (1) {
+			std::cin >> ans;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+			if (ans == 'y' || ans == 'n') {
+				break;
+			}
+			else {
+				std::cout << "Invalid command" << std::endl;
+			}
+		}
+		if (ans == 'n') {
+			std::cout << "Scan cancelled." << std::endl;
+			return;
+		}
+	}
+
+	std::ofstream file(fileName);
+	if (!file) {
+		std::cerr << "Failed to open file for writing." << std::endl;
+		return;
+	}
+
+	HashStreamWriter writer(file, StrategyChecksumCalculator(std::move(alg)));
 	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
 	writer.visitDirectory(*dir);
+
+	if (!file) {
+		std::cerr << "An error occurred when writing to the file" << std::endl;
+		return;
+	}
+	std::cout << std::endl << "The scan was successful" << std::endl;
 }

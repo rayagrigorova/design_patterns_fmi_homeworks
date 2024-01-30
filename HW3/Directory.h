@@ -16,5 +16,5 @@ public:
 	const std::vector<std::unique_ptr<AbstractFile>>& getChildren() const;
 	std::uintmax_t getSize() const override;
 
-	void accept(const FileVisitor& v) const override;
+	void accept(FileVisitor& v) const override;
 };

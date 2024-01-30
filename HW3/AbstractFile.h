@@ -20,5 +20,5 @@ public:
 	const fs::path& getPath() const;
 
 	// use double dispatch to execute the proper visitor method on the current instance
-	virtual void accept(const FileVisitor& v) const = 0;
+	virtual void accept(FileVisitor& v) const = 0;
 };

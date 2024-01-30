@@ -3,8 +3,8 @@
 #include <string>
 #include <cryptlib.h>
 
-class Directory;
-class StrategyChecksumCalculator;
+#include "Directory.h"
+#include "StrategyChecksumCalculator.h"
 
 class Application {
 	void performScan();

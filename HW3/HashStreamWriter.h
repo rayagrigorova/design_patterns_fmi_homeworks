@@ -6,11 +6,12 @@
 
 class HashStreamWriter : public FileVisitor, public Observable {
 	StrategyChecksumCalculator calc;
+	std::ostream& os;
 public:
-	HashStreamWriter(std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
-	HashStreamWriter(StrategyChecksumCalculator&& calc);
+	HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
+	HashStreamWriter(std::ostream& os, StrategyChecksumCalculator&& calc);
 
-	void visitFile(const File& file) const override;
+	void visitFile(const File& file) override;
 
 	virtual void subscribe(std::shared_ptr<Observer> o) override;
 };

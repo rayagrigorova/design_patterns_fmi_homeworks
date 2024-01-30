@@ -18,6 +18,6 @@ std::uintmax_t File::getSize() const {
 	return size;
 }
 
-void File::accept(const FileVisitor& v) const{
+void File::accept(FileVisitor& v) const{
 	v.visitFile(*this);
 }

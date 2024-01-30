@@ -7,5 +7,5 @@ class ReportWriter : public FileVisitor {
 public:
 	ReportWriter(std::ostream& os);
 
-	void visitFile(const File& file) const override;
+	void visitFile(const File& file) override;
 };
