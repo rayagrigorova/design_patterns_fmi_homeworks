@@ -56,7 +56,7 @@ std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
             return buildDir(link);
         }
         catch (const fs::filesystem_error& e) {
-            std::cerr << "Error when reading symbolic link" << e.what() << "\n";
+            std::cerr << "Error when reading symbolic link" << e.what() << std::endl;
             return nullptr;
         }
     }

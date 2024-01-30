@@ -15,13 +15,13 @@ void HashStreamWriter::visitFile(const File& file) const {
 	// Open the file since the calculator works with an open stream
 	std::ifstream ifs(file.getPath(), std::ios::binary);
 	if (!ifs.is_open()) {
-		std::cerr << "The file could not be opened\n";
+		std::cerr << "The file could not be opened" << std::endl;
 		return;
 	}
 	notifySubscribers(file.getPath().filename().string());
 
 	std::string resultHash = calc.calculate(ifs);
-	std::cout << resultHash << " " << file.getPath().string() << "\n";
+	std::cout << resultHash << " " << file.getPath().string() << std::endl;
 	ifs.close();
 }
 

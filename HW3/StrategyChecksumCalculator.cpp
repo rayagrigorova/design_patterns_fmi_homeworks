@@ -17,7 +17,7 @@ StrategyChecksumCalculator::StrategyChecksumCalculator(std::unique_ptr<CryptoPP:
 // (more specifically the parts related to the usage of the CryptoPP library to hash a string)
 std::string StrategyChecksumCalculator::calculate(std::istream& is) const {
     if (!strategy) {
-        std::cerr << "Hashing strategy not set.\n";
+        std::cerr << "Hashing strategy not set." << std::endl;
         return "";
     }
 

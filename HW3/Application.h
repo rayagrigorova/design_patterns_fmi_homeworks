@@ -1,15 +1,23 @@
 #pragma once
 
 #include <string>
+#include <cryptlib.h>
+
+class Directory;
+class StrategyChecksumCalculator;
 
 class Application {
 	void performScan();
-	void  handleLinks();
+
+	void handleLinks();
 	void chooseAlgorithm();
+	void buildDirectory();
+	void displayReport();
 	void startScanning();
 
 	bool followLinks = false; 
-	std::string hashingAlgorithm;
+	std::unique_ptr<Directory> dir = nullptr;
+	std::unique_ptr<CryptoPP::HashTransformation> alg = nullptr;
 public:
 	void run();
 };

@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <vector>
 #include <filesystem>
+#include <unordered_map>
+#include <functional> // for std::function, std::function is a function wrapper 
 
 #include "Application.h"
 
@@ -15,13 +17,25 @@
 
 namespace fs = std::filesystem;
 
-static std::vector<std::string> hashingFunctions = { "Adler32", "BLAKE2b", "MD2", "MD4", "MD5", "SHA1", "SHA256", "SHA512", "Tiger", "Whirlpool"};
+std::unordered_map<std::string, std::function<std::unique_ptr<CryptoPP::HashTransformation>()>> hashingFunctions = {
+	{"Adler32", []() { return std::make_unique<CryptoPP::Adler32>(); }},
+	{"BLAKE2b", []() { return std::make_unique<CryptoPP::BLAKE2b>(); }},
+	{"MD2", []() { return std::make_unique<CryptoPP::MD2>(); }},
+	{"MD4", []() { return std::make_unique<CryptoPP::MD4>(); }},
+	{"MD5", []() { return std::make_unique<CryptoPP::MD5>(); }},
+	{"SHA1", []() { return std::make_unique<CryptoPP::SHA1>(); }},
+	{"SHA256", []() { return std::make_unique<CryptoPP::SHA256>(); }},
+	{"SHA512", []() { return std::make_unique<CryptoPP::SHA512>(); }},
+	{"Tiger", []() { return std::make_unique<CryptoPP::Tiger>(); }},
+	{"Whirlpool", []() { return std::make_unique<CryptoPP::Whirlpool>(); }},
+};
 
 void Application::run() {
 	while (1) {
-		std::cout << "Enter 's' to start a scan and 'x' to exit\n";
+		std::cout << "Enter 's' to start a scan and 'x' to exit" << std::endl;
 		char input;
 		std::cin >> input;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		
 		switch (input) {
 		case 'x': 
@@ -30,33 +44,34 @@ void Application::run() {
 			performScan();
 			break;
 		default:
-			std::cout << "Invalid command\n";
+			std::cout << "Invalid command" << std::endl;
 			break;
 		}
 	}
 }
 
 void Application::handleLinks() {
-	std::cout << "Please, choose how you want to handle symbolic links/shortcuts:\n";
-	std::cout << "Option 1: Calculating the checksum of the actual symbolic link or shorctut\n";
-	std::cout << "Option 2: Traversing the target of the symbolic link or shortcut\n";
-	std::cout << "Enter '1' for Option 1 and '2' for Option 2\n";
+	std::cout << "Please, choose how you want to handle symbolic links/shortcuts:" << std::endl;
+	std::cout << "Option 1: Calculating the checksum of the actual symbolic link or shortcut" << std::endl;
+	std::cout << "Option 2: Traversing the target of the symbolic link or shortcut" << std::endl;
+	std::cout << "Enter '1' for Option 1 and '2' for Option 2" << std::endl;
 
-	bool flag = 1;
-	while (flag) {
+	while (1) {
 		char ans;
 		std::cin >> ans;
-		switch (ans) {
-		case '1':
-			followLinks = false;
-			flag = false;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		if (ans == '1' || ans == '2') {
+			if (ans == '1') {
+				followLinks = false;
+			}
+			else {
+				followLinks = true;;
+			}
 			break;
-		case '2':
-			followLinks = true;
-			flag = false;
-			break;
-		default:
-			std::cout << "The option you have entered is invalid.\n";
+		}
+		else {
+			std::cout << "The option you have entered is invalid." << std::endl;
 		}
 	}
 }
@@ -64,64 +79,61 @@ void Application::handleLinks() {
 void Application::performScan() {
 	handleLinks();
 	chooseAlgorithm();
+	buildDirectory();
+	displayReport();
+	startScanning();
 }
 
 void Application::chooseAlgorithm() {
-	std::cout << "Please, choose a hashing algorithm:\n";
-	for (int i = 0; i < hashingFunctions.size(); i++) {
-		std::cout << hashingFunctions[i] << " ";
+	std::cout << "Please, choose a hashing algorithm. Available options:" << std::endl;
+
+	for (auto& pair : hashingFunctions) {
+		std::cout << pair.first << ' ';
 	}
+	std::cout << std::endl;
+
 	while (1) {
 		std::string name;
 		std::cin >> name;
-		if (std::find(hashingFunctions.begin(), hashingFunctions.end(), name) != hashingFunctions.end()) {
-			hashingAlgorithm = name;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		if (hashingFunctions.count(name) != 0) {
+			std::unique_ptr<CryptoPP::HashTransformation> result = hashingFunctions[name]();
+			alg = std::move(result);
 			return;
 		}
 		else {
-			std::cout << "The algorithm name you have chosen is invalid. Please, enter again.\n";
+			std::cout << "The algorithm name you have chosen is invalid. Please, enter again." << std::endl;
 		}
 	}
 }
 
-void Application::startScanning() {
-	StrategyChecksumCalculator calc; 
+void Application::displayReport() {
+	std::cout << "Do you want a report of all files and their sizes to be scanned before the actual scan is started?" << std::endl;
+	std::cout << "Enter 'y' for 'yes' and 'n' for 'no'." << std::endl;
 
-	if (hashingAlgorithm == "Adler32") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::Adler32>());
-	} 
-	else if (hashingAlgorithm == "BLAKE2b") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::BLAKE2b>());
-	}
-	else if (hashingAlgorithm == "MD2") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::MD2>());
-	}
-	else if (hashingAlgorithm == "MD4") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::MD2>());
-	}
-	else if (hashingAlgorithm == "MD5") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::MD2>());
-	}
-	else if (hashingAlgorithm == "SHA1") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::SHA1>());
-	}
-	else if (hashingAlgorithm == "SHA256") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::SHA256>());
-	}
-	else if (hashingAlgorithm == "SHA512") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::SHA512>());
-	}
-	else if (hashingAlgorithm == "Tiger") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::Tiger>());
-	}
-	else if (hashingAlgorithm == "Whirlpool") {
-		calc.setAlgorithm(std::make_unique<CryptoPP::Whirlpool>());
-	}
-	else {
-		std::cout << "An error has occurred. The hasing algorithm is unknown\n";
-		return;
-	}
+	while (1) {
+		char input;
+		std::cin >> input;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+		if (input == 'y') {
+			ReportWriter rw(std::cout);
+			rw.visitDirectory(*dir);
+			break;
+		}
+		else if (input == 'n') {
+			return;
+		}
+		else{
+			std::cout << "Invalid command" << std::endl;
+		}
+	}
+	std::cout << "Press Enter to continue...";
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void Application::buildDirectory() {
 	std::unique_ptr<AbstractBuilder> builder;
 	if (followLinks) {
 		builder = std::move(std::make_unique<FollowBuilder>());
@@ -130,23 +142,26 @@ void Application::startScanning() {
 		builder = std::move(std::make_unique<NoFollowBuilder>());
 	}
 
-	std::unique_ptr<Directory> builtResult; 
+	std::unique_ptr<Directory> builtResult;
 	while (1) {
-		std::cout << "Please, enter the path of the target directory:\n";
+		std::cout << "Please, enter the path of the target directory:" << std::endl;
 		std::string input;
-		std::cin >> input; 
+		std::cin >> input;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		fs::path filePath(input);
-		if (!fs::exists(filePath) || fs::is_directory(filePath)) {
-			std::cout << "The path you have entered is invalid. Please, enter again.\n";
+		if (!fs::exists(filePath) || !fs::is_directory(filePath)) {
+			std::cout << "The path you have entered is invalid. Please, enter again." << std::endl;
 		}
 		else {
-			builtResult = std::move(builder->buildDir(filePath));
-			break;
+			dir = std::move(builder->buildDir(filePath));
+			return;
 		}
 	}
+}
 
-	HashStreamWriter writer(std::move(calc));
-	writer.subscribe(std::make_unique<ProgressReporter>(builtResult->getSize()));
-	writer.visitDirectory(*builtResult);
+void Application::startScanning() {
+	HashStreamWriter writer(StrategyChecksumCalculator(std::move(alg)));
+	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
+	writer.visitDirectory(*dir);
 }

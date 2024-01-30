@@ -18,7 +18,7 @@ ProgressReporter::ProgressReporter(std::uintmax_t totalBytes) : totalBytes(total
 namespace {
     void visualizePercentage(double percentage) {
         if (percentage < 0) {
-            std::cerr << "The number representing the file processing percentage is invalid\n";
+            std::cerr << "The number representing the file processing percentage is invalid" << std::endl;
             return;
         }
         std::cout << "\r";
@@ -42,7 +42,7 @@ namespace {
 
 void ProgressReporter::update(const Observable& sender, const std::string& context) {
     if (typeid(sender) == typeid(HashStreamWriter)) {
-        std::cout << "\nProcessing " << context << "...\n";
+        std::cout << std::endl << "Processing " << context << "..." << std::endl;
     }
     else if (typeid(sender) == typeid(StrategyChecksumCalculator)) {
         try {
@@ -50,7 +50,7 @@ void ProgressReporter::update(const Observable& sender, const std::string& conte
             bytesProcessed += conversionResult;
         }
         catch (const std::exception& e) {
-            std::cerr << "\nError in string to number conversion: " << e.what() << "\n";
+            std::cerr << std::endl << "Error in string to number conversion: " << e.what() << std::endl;
         }
 
         double percentage = (totalBytes == 0) ? 0 : ((double)bytesProcessed / totalBytes) * 100;
