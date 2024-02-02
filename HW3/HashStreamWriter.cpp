@@ -30,4 +30,67 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	calc.subscribe(o);
 }
 
+void HashStreamWriter::visitDirectory(const Directory& dir) {
+	if (!rootDirPath.has_value()) {
+		rootDirPath = dir.getPath();
+		directoryTraversed = &dir;
+	}
+	const std::vector<std::unique_ptr<AbstractFile>>& children = dir.getChildren();
+	for (size_t i = 0; i < children.size(); i++) {
+		currentIndex = i;
+		children[i]->accept(*this);
+	}
+
+	if (dir.getPath() == rootDirPath.value_or(fs::path())) {
+		rootDirPath.reset();
+		directoryTraversed = nullptr;
+	}
+}
+
+void HashStreamWriter::Memento::setStreamWriterState(const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
+	const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex) {
+	
+	this->directoryTraversed = directoryTraversed;
+	this->rootDirPath = rootDirPath;
+	this->calc = calc;
+	this->subscribers = subscribers;
+	this->currentIndex = currentIndex;
+}
+
+void HashStreamWriter::Memento::setProgressReporterState(std::uintmax_t totalBytes, std::uintmax_t bytesProcessed,
+	const std::chrono::time_point<std::chrono::steady_clock>& startTime) {
+
+	this->totalBytes = totalBytes;
+	this->bytesProcessed = bytesProcessed;
+	this->startTime = startTime;
+}
+
+HashStreamWriter::Memento::Memento(const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
+	const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex,
+	std::uintmax_t totalBytes, std::uintmax_t bytesProcessed, const std::chrono::time_point<std::chrono::steady_clock>& startTime) {
+	setStreamWriterState(directoryTraversed, rootDirPath, calc, subscribers, currentIndex);
+	setProgressReporterState(totalBytes, bytesProcessed, startTime); 
+}
+
+HashStreamWriter::Memento::Memento(const HashStreamWriter& hsr) {
+	setStreamWriterState(hsr.directoryTraversed, hsr.rootDirPath, hsr.calc, hsr.subscribers, hsr.currentIndex);
+}
+
+HashStreamWriter::Memento::Memento(const ProgressReporter& r) {
+	setProgressReporterState(r.totalBytes, r.bytesProcessed, r.startTime);
+}
+
+HashStreamWriter::Memento HashStreamWriter::save() const {
+	return HashStreamWriter::Memento(*this);
+}
+
+void HashStreamWriter::restore(const Memento& m) {
+	directoryTraversed = m.directoryTraversed;
+	rootDirPath = m.rootDirPath;
+	calc = m.calc;
+	subscribers = m.subscribers;
+	currentIndex = m.currentIndex; 
+}
+
+
 

@@ -21,13 +21,17 @@
 #include "ChecksumCalculator.h"
 #include "Observable.h"
 
-class StrategyChecksumCalculator : public ChecksumCalculator, public Observable {
+class StrategyChecksumCalculator : public ChecksumCalculator, public Observable, public Observer {
 	std::unique_ptr<CryptoPP::HashTransformation> strategy = nullptr;
 public:
 	StrategyChecksumCalculator() = default;
+	StrategyChecksumCalculator(const StrategyChecksumCalculator& other);
 	StrategyChecksumCalculator(std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
+	StrategyChecksumCalculator& operator=(const StrategyChecksumCalculator& other); 
 	
 	std::string calculate(std::istream& is) const override;
 
 	void setAlgorithm(std::unique_ptr<CryptoPP::HashTransformation>&& newStrategy);
+
+	virtual void update(const Observable& sender, const std::string& context) override;
 };

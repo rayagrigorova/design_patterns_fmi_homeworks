@@ -9,7 +9,7 @@ void FileVisitor::visitDirectory(const Directory& dir) {
 		children[i]->accept(*this);
 	}
 
-	if (dir.getPath() == rootDirPath.value()){
+	if (dir.getPath() == rootDirPath.value_or(fs::path())){
 		rootDirPath.reset();
 	}
 }

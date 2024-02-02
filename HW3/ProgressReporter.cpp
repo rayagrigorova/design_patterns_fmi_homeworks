@@ -66,3 +66,13 @@ void ProgressReporter::update(const Observable& sender, const std::string& conte
     }
 }
 
+HashStreamWriter::Memento ProgressReporter::save() const {
+    return HashStreamWriter::Memento(*this);
+}
+
+void ProgressReporter::restore(const HashStreamWriter::Memento& m) {
+    totalBytes = m.totalBytes;
+    bytesProcessed = m.bytesProcessed;
+    startTime = m.startTime;
+}
+

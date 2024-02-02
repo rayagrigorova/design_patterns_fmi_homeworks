@@ -62,3 +62,31 @@ void StrategyChecksumCalculator::setAlgorithm(std::unique_ptr<CryptoPP::HashTran
     }
     strategy = std::move(newStrategy);
 }
+
+void StrategyChecksumCalculator::update(const Observable& sender, const std::string& context) {
+
+}
+
+StrategyChecksumCalculator::StrategyChecksumCalculator(const StrategyChecksumCalculator& other) : Observable(other){
+    if (other.strategy) {
+        strategy = std::make_unique<CryptoPP::HashTransformation>(other.strategy->Clone());
+    }
+    else {
+        strategy = nullptr;
+    }
+}
+
+// std::unique_ptr does not allow copying and assignment 
+//the assignment operator is deleted because of the std::unique_ptr member
+StrategyChecksumCalculator& StrategyChecksumCalculator::operator=(const StrategyChecksumCalculator& other) {
+    if (this != &other) {
+        Observable::operator=(other);
+        if (other.strategy) {
+            strategy = std::make_unique<CryptoPP::HashTransformation>(other.strategy->Clone());
+        }
+        else {
+            strategy = nullptr;
+        }
+    }
+    return *this;
+}
