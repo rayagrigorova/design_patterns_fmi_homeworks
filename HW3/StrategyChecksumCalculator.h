@@ -4,8 +4,9 @@
 
 
 // I am using the Crypto++ library for the cryptographic hash functions.
-// The common interface for hashing functions is HashTransformation. 
-// I am going go use the strategy pattern instead of creating a derived 
+
+// The common interface for hashing functions in Crypto++ is HashTransformation. 
+// I am going to use the strategy pattern instead of creating a derived 
 // class for each of the algorithms below. 
 
 #include <adler32.h>

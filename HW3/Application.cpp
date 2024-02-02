@@ -145,8 +145,7 @@ void Application::buildDirectory() {
 	while (1) {
 		std::cout << "Please, enter the path of the target directory:" << std::endl;
 		std::string input;
-		std::cin >> input;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::getline(std::cin, input);
 
 		fs::path filePath(input);
 		if (!fs::exists(filePath) || !fs::is_directory(filePath)) {

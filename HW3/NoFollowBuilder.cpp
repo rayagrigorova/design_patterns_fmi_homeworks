@@ -1,6 +1,6 @@
 #include "NoFollowBuilder.h"
 
 std::unique_ptr<AbstractFile> NoFollowBuilder::buildLink(const fs::path& path) {
-    visited.insert(path);
-    return std::make_unique<File>(path);
+    // The buildFile() function performs the checks whether the file was already visited 
+    return buildFile(path);
 }
