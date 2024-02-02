@@ -16,6 +16,7 @@ void HashStreamWriter::visitFile(const File& file) {
 		std::cerr << "The file could not be opened" << std::endl;
 		return;
 	}
+	// Notify subscribers that the respective file was opened 
 	notifySubscribers(file.getPath().filename().string());
 
 	std::string resultHash = calc.calculate(ifs);
