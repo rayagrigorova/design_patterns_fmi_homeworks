@@ -61,13 +61,12 @@ void Application::handleLinks() {
 		std::cin >> ans;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		if (ans == '1' || ans == '2') {
-			if (ans == '1') {
-				followLinks = false;
-			}
-			else {
-				followLinks = true;;
-			}
+		if (ans == '1') {
+			followLinks = false;
+			break;
+		}
+		else if(ans == '2') {
+			followLinks = true;;
 			break;
 		}
 		else {
@@ -148,12 +147,18 @@ void Application::buildDirectory() {
 		std::getline(std::cin, input);
 
 		fs::path filePath(input);
-		if (!fs::exists(filePath) || !fs::is_directory(filePath)) {
-			std::cout << "The path you have entered is invalid. Please, enter again." << std::endl;
+		// The fs::exists() and fs::is_directory() functions could throw an error 
+		try {
+			if (!fs::exists(filePath) || !fs::is_directory(filePath)) {
+				std::cout << "The path you have entered is invalid. Please, enter again." << std::endl;
+			}
+			else {
+				dir = std::move(builder->buildDir(filePath));
+				return;
+			}
 		}
-		else {
-			dir = std::move(builder->buildDir(filePath));
-			return;
+		catch (const fs::filesystem_error& e) {
+			std::cout << "An error occurred when reading the file path: " << e.what() << std::endl;
 		}
 	}
 }
@@ -182,7 +187,7 @@ void Application::startScanning() {
 			return;
 		}
 	}
-
+	
 	std::ofstream file(fileName);
 	if (!file) {
 		std::cerr << "Failed to open file for writing." << std::endl;

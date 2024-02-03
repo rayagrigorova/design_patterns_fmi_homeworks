@@ -7,4 +7,6 @@ class Observable;
 class Observer {
 public:
 	virtual void update(const Observable& sender, const std::string& context) = 0;
+
+	virtual ~Observer() = default;
 };

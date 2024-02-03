@@ -5,7 +5,7 @@
 #include "ProgressReporter.h"
 #include "HashStreamWriter.h"
 
-const size_t SLEEP_TIME = 100;
+const size_t SLEEP_TIME = 80;
 const size_t PERCENTAGE_STEP = 10;
 const char PERCENTAGE_CHAR = '#';
 

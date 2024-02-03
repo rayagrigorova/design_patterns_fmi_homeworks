@@ -17,6 +17,8 @@ protected:
 	virtual std::unique_ptr<AbstractFile>buildLink(const fs::path& path) = 0;
 
 public:
+	virtual ~AbstractBuilder() = default;
+
 	virtual std::unique_ptr<File>buildFile(const fs::path& path);
 	virtual std::unique_ptr<Directory>buildDir(const fs::path& path);
 };
