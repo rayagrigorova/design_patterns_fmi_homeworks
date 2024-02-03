@@ -198,9 +198,10 @@ void Application::startScanning() {
 	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
 	writer.visitDirectory(*dir);
 
-	if (!file) {
+	if (file.fail()) {
 		std::cerr << "An error occurred when writing to the file" << std::endl;
 		return;
 	}
 	std::cout << std::endl << "The scan was successful" << std::endl;
+	file.close();
 }
