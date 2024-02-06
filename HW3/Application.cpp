@@ -30,6 +30,10 @@ std::unordered_map<std::string, std::function<std::unique_ptr<CryptoPP::HashTran
 	{"Whirlpool", []() { return std::make_unique<CryptoPP::Whirlpool>(); }},
 };
 
+Application::Application() {
+	caretaker = std::make_shared<Caretaker>();
+}
+
 void Application::run() {
 	while (1) {
 		std::cout << "Enter 's' to start a scan and 'x' to exit" << std::endl;
@@ -193,10 +197,23 @@ void Application::startScanning() {
 		return;
 	}
 	std::unique_ptr<CryptoPP::HashTransformation> alg = std::move(chooseAlgorithm());
-	writer = std::make_unique<HashStreamWriter>(file, StrategyChecksumCalculator(std::move(alg)));
+	writer = std::make_shared<HashStreamWriter>(file, StrategyChecksumCalculator(std::move(alg)));
 	reporter = std::make_shared<ProgressReporter>(dir->getSize()); 
+
+	caretaker = std::make_shared<Caretaker>(writer, reporter);
+
 	writer->subscribe(reporter);
+	writer->subscribe(caretaker);
+	reporter->subscribe(caretaker);
+
 	writer->visitDirectory(*dir);
+
+	while (caretaker->paused()) {
+		std::cout << "Please, press Enter to resume the scan" << std::endl; 
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		caretaker->restore();
+		writer->visitDirectory(*dir);
+	}
 
 	if (file.fail()) {
 		std::cerr << "An error occurred when writing to the file" << std::endl;

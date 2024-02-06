@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Observer.h"
+class Observer;
 
 class Observable {
 protected:

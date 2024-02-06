@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stack>
+#include <optional>
+
 #include "FileVisitor.h"
 #include "Observable.h"
 #include "StrategyChecksumCalculator.h"
@@ -7,13 +10,17 @@
 class HashStreamWriter : public FileVisitor, public Observable {
 	StrategyChecksumCalculator calc;
 	std::ostream& os;
-	// This non-owning pointer will be used to keep track of the current file hashStreamWriter is working with 
-	const AbstractFile* lastCallArgument = nullptr; 
+	
+	// The DFS will be conducted using a stack instead of recursively 
+	std::stack<const Directory*> dirStack;
+	// This variable will be used to resume the scanning if it was stopped 
+	size_t currentInd = 0;
 public:
 	HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
 	HashStreamWriter(std::ostream& os, StrategyChecksumCalculator&& calc);
 
 	void visitFile(const File& file) override;
+	void visitDirectory(const Directory& rootDir) override;
 
 	virtual void subscribe(std::shared_ptr<Observer> o) override;
 
@@ -24,8 +31,10 @@ public:
 		// Allow HashStreamWriter to access the private fields of the memento 
 		friend class HashStreamWriter;
 
-		const AbstractFile* lastCallArgument = nullptr;
-		HashStreamWriterMemento(const AbstractFile* lastCallArgument);
+		std::stack<const Directory*> dirStack;
+		size_t currentInd;
+		HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t currentInd);
+		HashStreamWriterMemento() = default;
 	};
 
 	HashStreamWriterMemento save() const;

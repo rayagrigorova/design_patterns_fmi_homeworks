@@ -1,4 +1,5 @@
 #include <fstream>
+#include <conio.h>
 
 #include "HashStreamWriter.h"
 #include "ProgressReporter.h"
@@ -10,8 +11,6 @@ HashStreamWriter::HashStreamWriter(std::ostream& os, StrategyChecksumCalculator&
 }
 
 void HashStreamWriter::visitFile(const File& file) {
-	lastCallArgument = &file;
-
 	// Open the file since the calculator works with an open stream
 	std::ifstream ifs(file.getPath(), std::ios::binary);
 	if (!ifs.is_open()) {
@@ -33,17 +32,52 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	calc.subscribe(o);
 }
 
-HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const AbstractFile* lastCallArgument) 
-	: lastCallArgument(lastCallArgument){
+HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t currentInd)
+	: dirStack(dirStack), currentInd(currentInd) {
 
 }
 
 HashStreamWriter::HashStreamWriterMemento HashStreamWriter::save() const {
-	return HashStreamWriter::HashStreamWriterMemento(lastCallArgument);
+	return HashStreamWriter::HashStreamWriterMemento(dirStack, currentInd);
 }
 
 void HashStreamWriter::restore(const HashStreamWriter::HashStreamWriterMemento& m) {
-	lastCallArgument = m.lastCallArgument;
+	dirStack = m.dirStack;
+	currentInd = m.currentInd;
 }
 
+void HashStreamWriter::visitDirectory(const Directory& rootDir) {
+	while (!dirStack.empty()) dirStack.pop();
+
+	rootDirPath = rootDir.getPath();
+	dirStack.push(const_cast<Directory*>(&rootDir));
+
+	while (!dirStack.empty()) {
+		const Directory* currentDir = dirStack.top();
+		dirStack.pop();
+
+		const std::vector<std::unique_ptr<AbstractFile>>& children = currentDir->getChildren();
+		for (size_t i = currentInd; i < children.size(); i++) {
+
+			// A key was pressed and this should be handled 
+			if (_kbhit()) {
+				int ch = _getch();
+				notifySubscribers("<Save>");
+				return;
+			}
+
+			if (typeid(*children[i]) == typeid(File)) {
+				children[i]->accept(*this);
+			}
+			else {
+				const Directory* childDir = dynamic_cast<Directory*>(children[i].get());
+				dirStack.push(childDir);
+			}
+		}
+		// reset the current index after each directory 
+		currentInd = 0;
+	}
+
+	rootDirPath.reset();
+}
 

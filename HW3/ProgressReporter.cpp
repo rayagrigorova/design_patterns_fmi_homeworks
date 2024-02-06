@@ -42,7 +42,12 @@ namespace {
 
 void ProgressReporter::update(const Observable& sender, const std::string& context) {
     if (typeid(sender) == typeid(HashStreamWriter)) {
-        std::cout << std::endl << "Processing " << context << "..." << std::endl;
+        if (context == "<Save>") {
+            notifySubscribers(context);
+        }
+        else {
+            std::cout << std::endl << "Processing " << context << "..." << std::endl;
+        }
     }
     else if (typeid(sender) == typeid(StrategyChecksumCalculator)) {
         try {
