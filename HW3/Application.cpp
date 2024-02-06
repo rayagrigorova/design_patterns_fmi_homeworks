@@ -209,9 +209,7 @@ void Application::startScanning() {
 	writer->visitDirectory(*dir);
 
 	while (caretaker->paused()) {
-		std::cout << "Please, press Enter to resume the scan" << std::endl; 
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		caretaker->restore();
+		waitForResume();
 		writer->visitDirectory(*dir);
 	}
 
@@ -220,4 +218,10 @@ void Application::startScanning() {
 		return;
 	}
 	std::cout << std::endl << "The scan was successful" << std::endl;
+}
+
+void Application::waitForResume() {
+	std::cout << std::endl << "Scan paused. Press Enter to resume." << std::endl;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	caretaker->restore();
 }

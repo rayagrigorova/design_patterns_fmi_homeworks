@@ -47,17 +47,19 @@ void HashStreamWriter::restore(const HashStreamWriter::HashStreamWriterMemento& 
 }
 
 void HashStreamWriter::visitDirectory(const Directory& rootDir) {
-	while (!dirStack.empty()) dirStack.pop();
-
-	rootDirPath = rootDir.getPath();
-	dirStack.push(const_cast<Directory*>(&rootDir));
+	// If there was no pausing happening
+	if (dirStack.empty()) {
+		rootDirPath = rootDir.getPath();
+		dirStack.push(const_cast<Directory*>(&rootDir));
+		currentInd = 0;
+	}
 
 	while (!dirStack.empty()) {
 		const Directory* currentDir = dirStack.top();
-		dirStack.pop();
 
 		const std::vector<std::unique_ptr<AbstractFile>>& children = currentDir->getChildren();
 		for (size_t i = currentInd; i < children.size(); i++) {
+			currentInd = i;
 
 			// A key was pressed and this should be handled 
 			if (_kbhit()) {
@@ -74,7 +76,7 @@ void HashStreamWriter::visitDirectory(const Directory& rootDir) {
 				dirStack.push(childDir);
 			}
 		}
-		// reset the current index after each directory 
+		dirStack.pop(); 
 		currentInd = 0;
 	}
 

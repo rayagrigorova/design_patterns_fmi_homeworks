@@ -18,6 +18,8 @@ class Application {
 	void displayReport();
 	void startScanning();
 
+	void waitForResume();
+
 	bool followLinks = false; 
 	std::unique_ptr<Directory> dir = nullptr;
 
