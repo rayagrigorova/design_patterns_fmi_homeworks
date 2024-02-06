@@ -73,3 +73,21 @@ void ProgressReporter::update(const Observable& sender, const std::string& conte
     }
 }
 
+ProgressReporter::ProgressReporterMemento::ProgressReporterMemento(std::uintmax_t totalBytes, std::uintmax_t bytesProcessed,
+    const std::chrono::time_point<std::chrono::steady_clock>& startTime) 
+    : totalBytes(totalBytes), bytesProcessed(bytesProcessed), startTime(startTime){
+    
+}
+
+ProgressReporter::ProgressReporterMemento ProgressReporter::save() const {
+    return ProgressReporter::ProgressReporterMemento(totalBytes, bytesProcessed, startTime);
+}
+
+void ProgressReporter::restore(const ProgressReporter::ProgressReporterMemento& m) {
+    totalBytes = m.totalBytes;
+    bytesProcessed = m.bytesProcessed;
+    startTime = m.startTime;
+}
+
+
+

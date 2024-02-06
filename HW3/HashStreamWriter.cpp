@@ -33,8 +33,9 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	calc.subscribe(o);
 }
 
-HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const AbstractFile* lastCallArgument) {
-	this->lastCallArgument = lastCallArgument;
+HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const AbstractFile* lastCallArgument) 
+	: lastCallArgument(lastCallArgument){
+
 }
 
 HashStreamWriter::HashStreamWriterMemento HashStreamWriter::save() const {
