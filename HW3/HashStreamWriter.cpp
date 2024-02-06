@@ -10,6 +10,8 @@ HashStreamWriter::HashStreamWriter(std::ostream& os, StrategyChecksumCalculator&
 }
 
 void HashStreamWriter::visitFile(const File& file) {
+	lastCallArgument = &file;
+
 	// Open the file since the calculator works with an open stream
 	std::ifstream ifs(file.getPath(), std::ios::binary);
 	if (!ifs.is_open()) {
@@ -29,6 +31,18 @@ void HashStreamWriter::visitFile(const File& file) {
 void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	Observable::subscribe(o);
 	calc.subscribe(o);
+}
+
+HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const AbstractFile* lastCallArgument) {
+	this->lastCallArgument = lastCallArgument;
+}
+
+HashStreamWriter::HashStreamWriterMemento HashStreamWriter::save() const {
+	return HashStreamWriter::HashStreamWriterMemento(lastCallArgument);
+}
+
+void HashStreamWriter::restore(const HashStreamWriter::HashStreamWriterMemento& m) {
+	lastCallArgument = m.lastCallArgument;
 }
 
 
