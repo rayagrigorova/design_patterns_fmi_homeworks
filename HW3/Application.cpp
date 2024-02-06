@@ -61,13 +61,12 @@ void Application::handleLinks() {
 		std::cin >> ans;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		if (ans == '1' || ans == '2') {
-			if (ans == '1') {
-				followLinks = false;
-			}
-			else {
-				followLinks = true;;
-			}
+		if (ans == '1') {
+			followLinks = false;
+			break;
+		}
+		else if(ans == '2') {
+			followLinks = true;;
 			break;
 		}
 		else {
@@ -78,13 +77,12 @@ void Application::handleLinks() {
 
 void Application::performScan() {
 	handleLinks();
-	chooseAlgorithm();
 	buildDirectory();
 	displayReport();
 	startScanning();
 }
 
-void Application::chooseAlgorithm() {
+std::unique_ptr<CryptoPP::HashTransformation> Application::chooseAlgorithm() {
 	std::cout << "Please, choose a hashing algorithm. Available options:" << std::endl;
 
 	for (auto& pair : hashingFunctions) {
@@ -99,13 +97,13 @@ void Application::chooseAlgorithm() {
 
 		if (hashingFunctions.count(name) != 0) {
 			std::unique_ptr<CryptoPP::HashTransformation> result = hashingFunctions[name]();
-			alg = std::move(result);
-			return;
+			return std::move(result);
 		}
 		else {
 			std::cout << "The algorithm name you have chosen is invalid. Please, enter again." << std::endl;
 		}
 	}
+	return nullptr;
 }
 
 void Application::displayReport() {
@@ -145,16 +143,21 @@ void Application::buildDirectory() {
 	while (1) {
 		std::cout << "Please, enter the path of the target directory:" << std::endl;
 		std::string input;
-		std::cin >> input;
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::getline(std::cin, input);
 
 		fs::path filePath(input);
-		if (!fs::exists(filePath) || !fs::is_directory(filePath)) {
-			std::cout << "The path you have entered is invalid. Please, enter again." << std::endl;
+		// The fs::exists() and fs::is_directory() functions could throw an error 
+		try {
+			if (!fs::exists(filePath) || !fs::is_directory(filePath)) {
+				std::cout << "The path you have entered is invalid. Please, enter again." << std::endl;
+			}
+			else {
+				dir = std::move(builder->buildDir(filePath));
+				return;
+			}
 		}
-		else {
-			dir = std::move(builder->buildDir(filePath));
-			return;
+		catch (const fs::filesystem_error& e) {
+			std::cout << "An error occurred when reading the file path: " << e.what() << std::endl;
 		}
 	}
 }
@@ -183,20 +186,43 @@ void Application::startScanning() {
 			return;
 		}
 	}
-
+	
 	std::ofstream file(fileName);
 	if (!file) {
 		std::cerr << "Failed to open file for writing." << std::endl;
 		return;
 	}
+	std::unique_ptr<CryptoPP::HashTransformation> alg = std::move(chooseAlgorithm());
+	writer = std::make_unique<HashStreamWriter>(file, StrategyChecksumCalculator(std::move(alg)));
+	reporter = std::make_shared<ProgressReporter>(dir->getSize());
+	writer->subscribe(reporter);
+	writer->subscribe(shared_from_this());
+	writer->visitDirectory(*dir);
 
-	HashStreamWriter writer(file, StrategyChecksumCalculator(std::move(alg)));
-	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
-	writer.visitDirectory(*dir);
-
-	if (!file) {
+	if (file.fail()) {
 		std::cerr << "An error occurred when writing to the file" << std::endl;
 		return;
 	}
 	std::cout << std::endl << "The scan was successful" << std::endl;
+}
+
+// The one reporting that a key is pressed will be HashStreamWriter
+// If the scan had been stopped, restore the states and resume
+// Else, stop the program and wait for user input
+void Application::update(const Observable& sender, const std::string& context) {
+	if (typeid(sender) == typeid(HashStreamWriter)) {
+		toRestore.first = writer->save();
+		toRestore.second = reporter->save();
+
+		std::cout << "Press Enter to continue...";
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		writer->restore(toRestore.first);
+		reporter->restore(toRestore.second);
+
+		writer->visitDirectory(*dir);
+	}
+	else {
+		std::cerr << "Unknown sender" << std::endl;
+	}
 }

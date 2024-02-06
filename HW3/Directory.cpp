@@ -24,6 +24,7 @@ std::uintmax_t Directory::getSize() const {
 	return cachedSize;
 }
 
+// 'Tell' the visitor object that it's visiting a directory
 void Directory::accept(FileVisitor& v) const{
 	v.visitDirectory(*this);
 }

@@ -1,60 +1,43 @@
 #pragma once
 
+#include <stack>
+#include <optional>
+
 #include "FileVisitor.h"
 #include "Observable.h"
 #include "StrategyChecksumCalculator.h"
 
-class HashStreamWriter : public FileVisitor, public Observable, public Observer {
+class HashStreamWriter : public FileVisitor, public Observable {
 	StrategyChecksumCalculator calc;
 	std::ostream& os;
-	const Directory* directoryTraversed = nullptr; 
 
-	size_t currentIndex = -1;
+	// A stack will be used to conduct the DFS. Otherwise it will  not be possible to restore the last point of traversal 
+	std::stack<const Directory*> dirStack;
+	std::optional<size_t> begin; // This index will only be set if the progress was restored from a memento 
 public:
 	HashStreamWriter(std::ostream& os, std::unique_ptr<CryptoPP::HashTransformation>&& strategy);
 	HashStreamWriter(std::ostream& os, StrategyChecksumCalculator&& calc);
 
 	void visitFile(const File& file) override;
-	void visitDirectory(const Directory& dir)override;
 
 	virtual void subscribe(std::shared_ptr<Observer> o) override;
 
-	class Memento {
+	// The state of HashStreamWriter only includes the last file that was (about to) be traversed
+	// I chose not to copy StrategyChecksumCalculator calc, because it stays the same for the lifetime of the object.
+	// The stream also stays the same (moreover copying streams is not possible)
+	class HashStreamWriterMemento {
+		// Allow HashStreamWriter to access the private fields of the memento 
 		friend class HashStreamWriter;
-		friend class ProgressReporter; 
+
+		std::stack<const Directory*> dirStack;
+		size_t begin;
 		
-		const Directory* directoryTraversed = nullptr;
-		std::optional<fs::path> rootDirPath;
-		StrategyChecksumCalculator calc;
-		std::vector<std::shared_ptr<Observer>> subscribers;
-		size_t currentIndex = -1;
-
-		std::uintmax_t totalBytes = 0;
-		std::uintmax_t bytesProcessed = 0;
-		std::chrono::time_point<std::chrono::steady_clock> startTime;
-
-		void setStreamWriterState(const const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
-			const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex);
-
-		void setProgressReporterState(std::uintmax_t totalBytes, std::uintmax_t bytesProcessed,
-			const std::chrono::time_point<std::chrono::steady_clock>& startTime);
-
-		Memento(const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
-			const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex,
-			std::uintmax_t totalBytes, std::uintmax_t bytesProcessed, const std::chrono::time_point<std::chrono::steady_clock>& startTime);
-		
-		Memento(const HashStreamWriter& hsr); 
-		Memento(const ProgressReporter& r);
-		Memento() = default;
-	public:
-		virtual ~Memento() = default;
-
-		Memento(const Memento&) = delete;
-		Memento& operator=(const Memento&) = delete;
+		HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t begin);
+		HashStreamWriterMemento() = default;
 	};
 
-	Memento save() const;
-	void restore(const Memento& m);
+	HashStreamWriterMemento save() const;
+	void restore(const HashStreamWriterMemento& m);
 
-	virtual void update(const Observable& sender, const std::string& context) override;
+	void visitDirectory(const Directory& dir)override;
 };

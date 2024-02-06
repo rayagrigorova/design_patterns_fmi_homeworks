@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cstdio>
 
 #include "HashStreamWriter.h"
 #include "ProgressReporter.h"
@@ -16,6 +17,7 @@ void HashStreamWriter::visitFile(const File& file) {
 		std::cerr << "The file could not be opened" << std::endl;
 		return;
 	}
+	// Notify subscribers that the respective file was opened 
 	notifySubscribers(file.getPath().filename().string());
 
 	std::string resultHash = calc.calculate(ifs);
@@ -30,67 +32,47 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	calc.subscribe(o);
 }
 
-void HashStreamWriter::visitDirectory(const Directory& dir) {
-	if (!rootDirPath.has_value()) {
-		rootDirPath = dir.getPath();
-		directoryTraversed = &dir;
-	}
-	const std::vector<std::unique_ptr<AbstractFile>>& children = dir.getChildren();
-	for (size_t i = 0; i < children.size(); i++) {
-		currentIndex = i;
-		children[i]->accept(*this);
-	}
+HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t begin) 
+	: dirStack(dirStack), begin(begin){
 
-	if (dir.getPath() == rootDirPath.value_or(fs::path())) {
-		rootDirPath.reset();
-		directoryTraversed = nullptr;
-	}
 }
 
-void HashStreamWriter::Memento::setStreamWriterState(const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
-	const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex) {
-	
-	this->directoryTraversed = directoryTraversed;
-	this->rootDirPath = rootDirPath;
-	this->calc = calc;
-	this->subscribers = subscribers;
-	this->currentIndex = currentIndex;
+HashStreamWriter::HashStreamWriterMemento HashStreamWriter::save() const {
+	return HashStreamWriter::HashStreamWriterMemento(dirStack, begin.value());
 }
 
-void HashStreamWriter::Memento::setProgressReporterState(std::uintmax_t totalBytes, std::uintmax_t bytesProcessed,
-	const std::chrono::time_point<std::chrono::steady_clock>& startTime) {
-
-	this->totalBytes = totalBytes;
-	this->bytesProcessed = bytesProcessed;
-	this->startTime = startTime;
+void HashStreamWriter::restore(const HashStreamWriter::HashStreamWriterMemento& m) {
+	dirStack = m.dirStack;
+	begin.value() = m.begin;
 }
 
-HashStreamWriter::Memento::Memento(const Directory* directoryTraversed, const std::optional<fs::path>& rootDirPath,
-	const StrategyChecksumCalculator& calc, const std::vector<std::shared_ptr<Observer>>& subscribers, size_t currentIndex,
-	std::uintmax_t totalBytes, std::uintmax_t bytesProcessed, const std::chrono::time_point<std::chrono::steady_clock>& startTime) {
-	setStreamWriterState(directoryTraversed, rootDirPath, calc, subscribers, currentIndex);
-	setProgressReporterState(totalBytes, bytesProcessed, startTime); 
-}
+void HashStreamWriter::visitDirectory(const Directory& rootDir) {
+    while (!dirStack.empty()) dirStack.pop();
 
-HashStreamWriter::Memento::Memento(const HashStreamWriter& hsr) {
-	setStreamWriterState(hsr.directoryTraversed, hsr.rootDirPath, hsr.calc, hsr.subscribers, hsr.currentIndex);
-}
+    rootDirPath = rootDir.getPath();
+    dirStack.push(const_cast<Directory*>(&rootDir)); 
 
-HashStreamWriter::Memento::Memento(const ProgressReporter& r) {
-	setProgressReporterState(r.totalBytes, r.bytesProcessed, r.startTime);
-}
+    while (!dirStack.empty()) {
+        const Directory* currentDir = dirStack.top();
+        dirStack.pop();
 
-HashStreamWriter::Memento HashStreamWriter::save() const {
-	return HashStreamWriter::Memento(*this);
-}
+        const std::vector<std::unique_ptr<AbstractFile>>& children = currentDir->getChildren();
+		size_t start = (begin.has_value()) ? begin.value() : 0;
+		for (size_t i = start; i < children.size(); i++){
+			if (getchar()) {
+				notifySubscribers("");
+			}
+			if (typeid(*children[i]) == typeid(File)) {
+				children[i]->accept(*this);
+			}
+			else {
+				const Directory* childDir = dynamic_cast<Directory*>(children[i].get());
+				dirStack.push(childDir);
+			}
+        }
+    }
 
-void HashStreamWriter::restore(const Memento& m) {
-	directoryTraversed = m.directoryTraversed;
-	rootDirPath = m.rootDirPath;
-	calc = m.calc;
-	subscribers = m.subscribers;
-	currentIndex = m.currentIndex; 
+    rootDirPath.reset();
 }
-
 
 

@@ -8,13 +8,13 @@
 #include <windows.h>
 
 namespace {
-    // !!!
+    // !!!!
     // The section of code below was developed with the assistance of OpenAI's ChatGPT.
 
     std::string findShortcutPath(const std::wstring& shortcutPath) {
         IShellLinkW* psl;
         WCHAR resolvedPath[MAX_PATH];
-        HRESULT hres = CoInitialize(NULL); // this initializes a COM library for the current thread
+        HRESULT hres = CoInitialize(NULL); // This initializes a COM library for the current thread
 
         if (FAILED(hres)) {
             return "";
@@ -23,7 +23,7 @@ namespace {
         // Create an instance of the ShellLink object
         hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&psl);
         if (SUCCEEDED(hres)) {
-            IPersistFile* ppf; // used to load the shortcut file 
+            IPersistFile* ppf; // Used to load the shortcut file 
 
             // Get the IPersistFile interface from the IShellLink interface
             hres = psl->QueryInterface(IID_IPersistFile, (void**)&ppf);
@@ -39,7 +39,7 @@ namespace {
             psl->Release();
         }
 
-        CoUninitialize(); // uninitialize COM library
+        CoUninitialize(); // Uninitialize COM library
 
         return std::string(resolvedPath, resolvedPath + wcslen(resolvedPath));
     }
@@ -47,9 +47,13 @@ namespace {
 
 
 std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
+    // Here I am checking if the path to the link (not the directory) was already added 
+    // This way the same link will not be handled twice. 
     if (visited.count(path)) { 
         return nullptr;
     }
+    visited.insert(path);
+
     if (fs::is_symlink(path)) {
         try {
             fs::path link = fs::read_symlink(path);
@@ -62,5 +66,9 @@ std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
     }
     // Handling a windows shortcut is not as straightforward
     fs::path link = findShortcutPath(path); 
+
+    if (fs::is_regular_file(link)) {
+        return buildFile(link);
+    }
     return buildDir(link);
 }

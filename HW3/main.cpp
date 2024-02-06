@@ -1,6 +1,6 @@
-﻿#include "Application.h"
+#include "Application.h"
 
 int main() {
-    Application a;
-    a.run();
+	std::shared_ptr<Application> app = std::make_shared<Application>();
+	app->run();
 }
