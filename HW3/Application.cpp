@@ -77,13 +77,12 @@ void Application::handleLinks() {
 
 void Application::performScan() {
 	handleLinks();
-	chooseAlgorithm();
 	buildDirectory();
 	displayReport();
 	startScanning();
 }
 
-void Application::chooseAlgorithm() {
+std::unique_ptr<CryptoPP::HashTransformation> Application::chooseAlgorithm() {
 	std::cout << "Please, choose a hashing algorithm. Available options:" << std::endl;
 
 	for (auto& pair : hashingFunctions) {
@@ -98,13 +97,13 @@ void Application::chooseAlgorithm() {
 
 		if (hashingFunctions.count(name) != 0) {
 			std::unique_ptr<CryptoPP::HashTransformation> result = hashingFunctions[name]();
-			alg = std::move(result);
-			return;
+			return std::move(result);
 		}
 		else {
 			std::cout << "The algorithm name you have chosen is invalid. Please, enter again." << std::endl;
 		}
 	}
+	return nullptr;
 }
 
 void Application::displayReport() {
@@ -193,7 +192,7 @@ void Application::startScanning() {
 		std::cerr << "Failed to open file for writing." << std::endl;
 		return;
 	}
-
+	std::unique_ptr<CryptoPP::HashTransformation> alg = std::move(chooseAlgorithm());
 	HashStreamWriter writer(file, StrategyChecksumCalculator(std::move(alg)));
 	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
 	writer.visitDirectory(*dir);
@@ -203,5 +202,4 @@ void Application::startScanning() {
 		return;
 	}
 	std::cout << std::endl << "The scan was successful" << std::endl;
-	file.close();
 }
