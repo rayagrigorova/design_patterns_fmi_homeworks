@@ -5,6 +5,8 @@
 
 #include "Directory.h"
 #include "StrategyChecksumCalculator.h"
+#include "HashStreamWriter.h"
+#include "ProgressReporter.h"
 
 class Application {
 	void performScan();
@@ -17,6 +19,8 @@ class Application {
 
 	bool followLinks = false; 
 	std::unique_ptr<Directory> dir = nullptr;
+	std::unique_ptr<HashStreamWriter> writer = nullptr;
+	std::shared_ptr<ProgressReporter> reporter = nullptr;
 public:
 	void run();
 };

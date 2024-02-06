@@ -193,9 +193,10 @@ void Application::startScanning() {
 		return;
 	}
 	std::unique_ptr<CryptoPP::HashTransformation> alg = std::move(chooseAlgorithm());
-	HashStreamWriter writer(file, StrategyChecksumCalculator(std::move(alg)));
-	writer.subscribe(std::make_unique<ProgressReporter>(dir->getSize()));
-	writer.visitDirectory(*dir);
+	writer = std::make_unique<HashStreamWriter>(file, StrategyChecksumCalculator(std::move(alg)));
+	reporter = std::make_shared<ProgressReporter>(dir->getSize()); 
+	writer->subscribe(reporter);
+	writer->visitDirectory(*dir);
 
 	if (file.fail()) {
 		std::cerr << "An error occurred when writing to the file" << std::endl;
