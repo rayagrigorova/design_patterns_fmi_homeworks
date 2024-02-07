@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stack>
+#include <deque>
 #include <optional>
 
 #include "FileVisitor.h"
@@ -12,7 +13,7 @@ class HashStreamWriter : public FileVisitor, public Observable {
 	std::ostream& os;
 	
 	// The DFS will be conducted using a stack instead of recursively 
-	std::stack<const Directory*> dirStack;
+	std::deque<const Directory*> dirStack;
 	// This variable will be used to resume the scanning if it was stopped 
 	size_t currentInd = 0;
 public:
@@ -31,9 +32,9 @@ public:
 		// Allow HashStreamWriter to access the private fields of the memento 
 		friend class HashStreamWriter;
 
-		std::stack<const Directory*> dirStack;
+		std::deque<const Directory*> dirStack;
 		size_t currentInd;
-		HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t currentInd);
+		HashStreamWriterMemento(const std::deque<const Directory*>& dirStack, size_t currentInd);
 		HashStreamWriterMemento() = default;
 	};
 

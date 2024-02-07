@@ -41,13 +41,12 @@ namespace {
 }
 
 void ProgressReporter::update(const Observable& sender, const std::string& context) {
+    // Send a message to 'Caretaker' to save state
     if (typeid(sender) == typeid(HashStreamWriter)) {
         if (context == "<Save>") {
             notifySubscribers(context);
         }
-        else {
-            std::cout << std::endl << "Processing " << context << "..." << std::endl;
-        }
+        std::cout << std::endl << "Processing " << context << "..." << std::endl;
     }
     else if (typeid(sender) == typeid(StrategyChecksumCalculator)) {
         try {

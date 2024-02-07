@@ -8,22 +8,24 @@ Caretaker::Caretaker(std::shared_ptr<HashStreamWriter> originalWriter, std::shar
 void Caretaker::update(const Observable& sender, const std::string& context) {
 	if (context == "<Save>") {
 		if (typeid(sender) == typeid(HashStreamWriter)) {
-			try {
-				const HashStreamWriter& writer = dynamic_cast<const HashStreamWriter&>(sender);
-				writerHistory.push(writer.save());
-			}
-			catch (const std::bad_cast& e) {
-				std::cerr << "Dynamic cast failed: " << e.what() << std::endl;
-			}
+			writerHistory.push(originalWriter->save());
+			//try {
+			//	const HashStreamWriter& writer = dynamic_cast<const HashStreamWriter&>(sender);
+			//	writerHistory.push(writer.save());
+			//}
+			//catch (const std::bad_cast& e) {
+			//	std::cerr << "Dynamic cast failed: " << e.what() << std::endl;
+			//}
 		}
 		else if (typeid(sender) == typeid(ProgressReporter)) {
-			try {
-				const ProgressReporter& reporter = dynamic_cast<const ProgressReporter&>(sender);
-				reporterHistory.push(reporter.save());
-			}
-			catch (const std::bad_cast& e) {
-				std::cerr << "Dynamic cast failed: " << e.what() << std::endl;
-			}
+			reporterHistory.push(originalReporter->save());
+			//try {
+			//	const ProgressReporter& reporter = dynamic_cast<const ProgressReporter&>(sender);
+			//	reporterHistory.push(reporter.save());
+			//}
+			//catch (const std::bad_cast& e) {
+			//	std::cerr << "Dynamic cast failed: " << e.what() << std::endl;
+			//}
 		}
 		else {
 			std::cerr << "Unknown sender" << std::endl;

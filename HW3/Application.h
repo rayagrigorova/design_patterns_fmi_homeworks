@@ -28,6 +28,5 @@ class Application {
 
 	std::shared_ptr<Caretaker> caretaker = nullptr;
 public:
-	Application();
 	void run();
 };

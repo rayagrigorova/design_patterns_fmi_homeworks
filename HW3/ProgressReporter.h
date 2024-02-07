@@ -6,7 +6,6 @@
 #include "Observer.h"
 #include "Observable.h"
 
-// Caretaker is an observable because it reports to the caretaker when its state should be captured 
 class ProgressReporter : public Observer, public Observable{
 	std::uintmax_t totalBytes = 0; 
 	std::uintmax_t bytesProcessed = 0;

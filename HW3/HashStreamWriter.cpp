@@ -1,5 +1,6 @@
 #include <fstream>
 #include <conio.h>
+#include <unordered_set>
 
 #include "HashStreamWriter.h"
 #include "ProgressReporter.h"
@@ -32,7 +33,7 @@ void HashStreamWriter::subscribe(std::shared_ptr<Observer> o) {
 	calc.subscribe(o);
 }
 
-HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const std::stack<const Directory*>& dirStack, size_t currentInd)
+HashStreamWriter::HashStreamWriterMemento::HashStreamWriterMemento(const std::deque<const Directory*>& dirStack, size_t currentInd)
 	: dirStack(dirStack), currentInd(currentInd) {
 
 }
@@ -50,36 +51,52 @@ void HashStreamWriter::visitDirectory(const Directory& rootDir) {
 	// If there was no pausing happening
 	if (dirStack.empty()) {
 		rootDirPath = rootDir.getPath();
-		dirStack.push(const_cast<Directory*>(&rootDir));
+		dirStack.push_front(&rootDir);
 		currentInd = 0;
 	}
 
 	while (!dirStack.empty()) {
-		const Directory* currentDir = dirStack.top();
+		const Directory* currentDir = dirStack.front();
 
 		const std::vector<std::unique_ptr<AbstractFile>>& children = currentDir->getChildren();
 		for (size_t i = currentInd; i < children.size(); i++) {
 			currentInd = i;
-
-			// A key was pressed and this should be handled 
-			if (_kbhit()) {
-				int ch = _getch();
-				notifySubscribers("<Save>");
-				return;
-			}
 
 			if (typeid(*children[i]) == typeid(File)) {
 				children[i]->accept(*this);
 			}
 			else {
 				const Directory* childDir = dynamic_cast<Directory*>(children[i].get());
-				dirStack.push(childDir);
+				dirStack.push_back(childDir);
+			}
+
+			// A key was pressed and this should be handled 
+			if (_kbhit()) {
+				int ch = _getch();
+				std::cin.clear();
+
+				currentInd++;
+				if (currentInd >= children.size()) { // If it's time to progress to the next directory in the stack 
+					dirStack.pop_front();
+					currentInd = 0;
+
+					// Corner case: the key was pressed after all directories and files were processed 
+					// In this case, don't save a memento. 
+					if (!dirStack.size()) {
+						return;
+					}
+				}
+				notifySubscribers("<Save>");
+				return;
 			}
 		}
-		dirStack.pop(); 
+		dirStack.pop_front();
 		currentInd = 0;
 	}
 
 	rootDirPath.reset();
 }
+
+
+
 

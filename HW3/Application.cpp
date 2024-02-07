@@ -30,13 +30,10 @@ std::unordered_map<std::string, std::function<std::unique_ptr<CryptoPP::HashTran
 	{"Whirlpool", []() { return std::make_unique<CryptoPP::Whirlpool>(); }},
 };
 
-Application::Application() {
-	caretaker = std::make_shared<Caretaker>();
-}
-
 void Application::run() {
 	while (1) {
 		std::cout << "Enter 's' to start a scan and 'x' to exit" << std::endl;
+		std::cout << "To pause the scan, press any key. The program checks for a request to pause scanning after each processed file." << std::endl;
 		char input;
 		std::cin >> input;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

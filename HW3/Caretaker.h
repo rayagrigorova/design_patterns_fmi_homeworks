@@ -5,9 +5,10 @@
 #include "Observer.h"
 
 // This class will be subscribed to HashStreamWriter by the Application 
+// This way it will know when to save the states of HashStreamWriter and ProgressReporter
 class Caretaker : public Observer{
-	// This could be a pair in the context of the app (because only one scan can be paused at a time)
-	// but I chose a stack since it's more general 
+	// This could be a pair in the context of the app (because only one scan can be paused at a time) but I chose a stack since it's more general.
+	// The stack isn't from pairs because the mementos for HashStreamWriterMemento and ProgressReporterMemento are saved at different times. 
 	std::stack<HashStreamWriter::HashStreamWriterMemento> writerHistory;
 	std::stack<ProgressReporter::ProgressReporterMemento> reporterHistory;
 
@@ -19,7 +20,7 @@ public:
 
 	virtual void update(const Observable& sender, const std::string& context) override;
 
-	// This function returns true if the stack is non empty(there are paused scans waiting to be restored)
+	// This function returns true if the stack is non empty (indicating that there are paused scans waiting to be restored)
 	bool paused() const;
 	void restore(); 
 };

@@ -7,7 +7,9 @@
 #include "Directory.h"
 
 // The 'builder' classes in my case more closely resemble 
-// the 'template method' pattern rather than the 'builder' pattern. 
+// the 'template method' pattern rather than the 'builder' pattern (combined with factory). 
+
+// The builder classes create the file structure to be traversed. The resulting structure should be a tree. 
 class AbstractBuilder {
 protected:
 	// Add paths to visited files and directories here 
