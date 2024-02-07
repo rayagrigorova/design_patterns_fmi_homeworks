@@ -201,7 +201,6 @@ void Application::startScanning() {
 
 	writer->subscribe(reporter);
 	writer->subscribe(caretaker);
-	reporter->subscribe(caretaker);
 
 	writer->visitDirectory(*dir);
 

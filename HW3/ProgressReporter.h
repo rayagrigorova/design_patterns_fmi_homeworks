@@ -6,7 +6,7 @@
 #include "Observer.h"
 #include "Observable.h"
 
-class ProgressReporter : public Observer, public Observable{
+class ProgressReporter : public Observer{
 	std::uintmax_t totalBytes = 0; 
 	std::uintmax_t bytesProcessed = 0;
 	
