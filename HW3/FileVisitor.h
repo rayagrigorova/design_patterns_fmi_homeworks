@@ -14,7 +14,6 @@ protected:
 public:
 	virtual ~FileVisitor() = default; 
 
-	// The concrete visitors will implement the visitFile() function
 	virtual void visitFile(const File& file) = 0;
 	virtual void visitDirectory(const Directory& dir);
 };

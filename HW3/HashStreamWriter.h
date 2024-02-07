@@ -12,7 +12,7 @@ class HashStreamWriter : public FileVisitor, public Observable {
 	StrategyChecksumCalculator calc;
 	std::ostream& os;
 	
-	// The DFS will be conducted using a stack instead of recursively 
+	// The directory traversal will be conducted using a deque
 	std::deque<const Directory*> dirStack;
 	// This variable will be used to resume the scanning if it was stopped 
 	size_t currentInd = 0;
@@ -25,7 +25,6 @@ public:
 
 	virtual void subscribe(std::shared_ptr<Observer> o) override;
 
-	// The state of HashStreamWriter only includes the last file that was (about to) be traversed
 	// I chose not to copy StrategyChecksumCalculator calc, because it stays the same for the lifetime of the object.
 	// The stream also stays the same (moreover copying streams is not possible)
 	class HashStreamWriterMemento {

@@ -21,6 +21,9 @@ bool Caretaker::paused() const {
 }
 
 void Caretaker::restore() {
+	if (history.empty()) {
+		std::cerr << "No state to restore" << std::endl;
+	}
 	originalWriter->restore(history.top().first);
 	originalReporter->restore(history.top().second);
 

@@ -8,7 +8,6 @@
 // This way it will know when to save the states of HashStreamWriter and ProgressReporter
 class Caretaker : public Observer{
 	// This could be a pair in the context of the app (because only one scan can be paused at a time) but I chose a stack since it's more general.
-	// The stack isn't from pairs because the mementos for HashStreamWriterMemento and ProgressReporterMemento are saved at different times. 
 	std::stack<std::pair<HashStreamWriter::HashStreamWriterMemento, ProgressReporter::ProgressReporterMemento>> history;
 
 	std::shared_ptr<HashStreamWriter> originalWriter = nullptr;

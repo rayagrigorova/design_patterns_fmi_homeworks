@@ -41,7 +41,6 @@ namespace {
 }
 
 void ProgressReporter::update(const Observable& sender, const std::string& context) {
-    // Send a message to 'Caretaker' to save state
     if (typeid(sender) == typeid(HashStreamWriter) && context != "<Save>") {
         std::cout << std::endl << "Processing " << context << "..." << std::endl;
     }

@@ -86,6 +86,7 @@ void HashStreamWriter::visitDirectory(const Directory& rootDir) {
 						return;
 					}
 				}
+				// Notify caretaker to save the states of HashStreamWriter and ProgressReporter
 				notifySubscribers("<Save>");
 				return;
 			}

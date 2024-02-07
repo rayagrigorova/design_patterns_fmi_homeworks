@@ -57,6 +57,9 @@ std::unique_ptr<AbstractFile> FollowBuilder::buildLink(const fs::path& path) {
     if (fs::is_symlink(path)) {
         try {
             fs::path link = fs::read_symlink(path);
+            if (fs::is_regular_file(link)) {
+                return buildFile(link);
+            }
             return buildDir(link);
         }
         catch (const fs::filesystem_error& e) {
